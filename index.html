@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎页 · 图片轮播</title>
+    <title>欢迎访问青翔未阔工作室官网</title>
     <style>
         * {
             margin: 0;
@@ -40,6 +40,7 @@
             z-index: 1;
         }
 
+        /* 欢迎文字 + 一言 + 副标题 区域 */
         .welcome-content {
             position: absolute;
             top: 50%;
@@ -54,17 +55,47 @@
             border-radius: 12px;
             backdrop-filter: blur(5px);
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            max-width: 700px;
+            width: 90%;
         }
 
         .welcome-content h1 {
             font-size: 3.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             letter-spacing: 4px;
         }
 
-        .welcome-content p {
+        .welcome-content .subtitle {
             font-size: 1.2rem;
+            margin-bottom: 20px;
             opacity: 0.9;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: white;
+        }
+
+        .welcome-content .saying-box {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.1rem;
+            opacity: 0.95;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .saying-text {
+            line-height: 1.6;
+            font-style: italic;
+            max-width: 600px;
+        }
+
+        .saying-meta {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            opacity: 0.7;
         }
 
         .carousel-dots {
@@ -98,6 +129,8 @@
             top: 20px;
             right: 30px;
             z-index: 20;
+            display: flex;
+            gap: 12px;
         }
 
         .nav-bar a {
@@ -137,14 +170,20 @@
     <div class="carousel" id="carousel"></div>
     <div class="carousel-dots" id="carouselDots"></div>
     <div class="loading-tip" id="loadingTip">加载图片中...</div>
+    
     <div class="welcome-content">
         <h1>欢迎访问</h1>
-        <p>青翔未阔工作室下载站</p>
+        <p class="subtitle">青翔未阔工作室官网</p>
+        <div class="saying-box" id="sayingBox">
+            <div class="saying-text" id="sayingText">✨ 正在加载一言...</div>
+            <div class="saying-meta" id="sayingMeta"></div>
+        </div>
     </div>
-<div class="nav-bar" style="display: flex; gap: 12px;">
-    <a href="download.html">📥 下载中心</a>
-    <a href="mc-status.html">🎮 MC状态</a>
-</div>
+
+    <div class="nav-bar">
+        <a href="download.html">📥 下载中心</a>
+        <a href="mc-status.html">🎮 MC状态</a>
+    </div>
 
     <script>
         // ==================== 请修改以下配置 ====================
@@ -164,7 +203,25 @@
         const dotsContainer = document.getElementById('carouselDots');
         const loadingTip = document.getElementById('loadingTip');
 
-        // 获取文件夹内的所有图片
+        // ---------- 一言 API ----------
+        const sayingText = document.getElementById('sayingText');
+        const sayingMeta = document.getElementById('sayingMeta');
+
+        async function fetchSaying() {
+            try {
+                const response = await fetch('https://uapis.cn/api/v1/saying');
+                if (!response.ok) throw new Error('API 请求失败');
+                const data = await response.json();
+                sayingText.textContent = data.text || '“无论多么微小的邂逅，都必定有着某种意义。”';
+                sayingMeta.textContent = '—— 一言 · 每日灵感';
+            } catch (error) {
+                console.warn('一言加载失败，使用默认语句', error);
+                sayingText.textContent = '“无论多么微小的邂逅，都必定有着某种意义。”';
+                sayingMeta.textContent = '—— 一言 · 离线模式';
+            }
+        }
+
+        // ---------- 图片轮播 ----------
         async function fetchImagesFromFolder() {
             const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.imagesPath}?ref=${CONFIG.branch}`;
             
@@ -190,10 +247,9 @@
             }
         }
 
-        // 构建轮播图 DOM
         function buildCarousel(imageUrls) {
             if (imageUrls.length === 0) {
-                loadingTip.textContent = '未找到图片，请确保 images/background 文件夹中有图片';
+                loadingTip.textContent = '未找到图片，请确保 background 文件夹中有图片';
                 return;
             }
 
@@ -255,7 +311,10 @@
             }
         });
 
+        // ---------- 初始化 ----------
         (async function init() {
+            // 并行加载一言和图片（互不阻塞）
+            fetchSaying();
             const imageUrls = await fetchImagesFromFolder();
             buildCarousel(imageUrls);
         })();
