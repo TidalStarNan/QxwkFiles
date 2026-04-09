@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎页 · 图片轮播</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            pointer-events: none;
+        }
+
+        .carousel img.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .welcome-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px 50px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        .welcome-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            letter-spacing: 4px;
+        }
+
+        .welcome-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 12px;
+        }
+
+        .carousel-dots .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .carousel-dots .dot.active {
+            background: white;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-bar {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            z-index: 20;
+        }
+
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+            font-size: 16px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .nav-bar a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+
+        .loading-tip {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel" id="carousel"></div>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <div class="loading-tip" id="loadingTip">加载图片中...</div>
+    <div class="welcome-content">
+        <h1>欢迎访问</h1>
+        <p>青翔未阔工作室下载站</p>
+    </div>
+    <div class="nav-bar">
+        <a href="download.html">📥 下载中心</a>
+    </div>
+
+    <script>
+        // ==================== 请修改以下配置 ====================
+        const CONFIG = {
+            owner: 'TidalStarNan',        // 例如 'octocat'
+            repo: 'QxwkFiles',               // 例如 'my-website'
+            branch: 'main',                  // 例如 'main' 或 'master'
+            imagesPath: 'background', // 存放背景图片的文件夹路径
+            switchInterval: 5000,            // 轮播切换间隔（毫秒）
+        };
+        // =====================================================
+
+        let currentIndex = 0;
+        let intervalId = null;
+
+        const carousel = document.getElementById('carousel');
+        const dotsContainer = document.getElementById('carouselDots');
+        const loadingTip = document.getElementById('loadingTip');
+
+        // 获取文件夹内的所有图片
+        async function fetchImagesFromFolder() {
+            const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.imagesPath}?ref=${CONFIG.branch}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`API 请求失败: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+                const imageFiles = data.filter(item => {
+                    if (item.type !== 'file') return false;
+                    const name = item.name.toLowerCase();
+                    return imageExtensions.some(ext => name.endsWith(ext));
+                });
+
+                return imageFiles.map(file => file.download_url);
+            } catch (error) {
+                console.error('获取图片失败:', error);
+                loadingTip.textContent = '图片加载失败，请检查配置或网络';
+                return [];
+            }
+        }
+
+        // 构建轮播图 DOM
+        function buildCarousel(imageUrls) {
+            if (imageUrls.length === 0) {
+                loadingTip.textContent = '未找到图片，请确保 images/background 文件夹中有图片';
+                return;
+            }
+
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            imageUrls.forEach((url, index) => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `背景图片 ${index + 1}`;
+                if (index === 0) img.classList.add('active');
+                carousel.appendChild(img);
+            });
+
+            imageUrls.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => switchToImage(index));
+                dotsContainer.appendChild(dot);
+            });
+
+            loadingTip.style.display = 'none';
+            startCarousel();
+        }
+
+        function switchToImage(index) {
+            const imgs = document.querySelectorAll('.carousel img');
+            const dots = document.querySelectorAll('.dot');
+            
+            if (imgs.length === 0) return;
+
+            imgs[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+
+            currentIndex = index;
+            imgs[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        function nextImage() {
+            const imgs = document.querySelectorAll('.carousel img');
+            if (imgs.length === 0) return;
+            const nextIndex = (currentIndex + 1) % imgs.length;
+            switchToImage(nextIndex);
+        }
+
+        function startCarousel() {
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(nextImage, CONFIG.switchInterval);
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(intervalId);
+                intervalId = null;
+            } else if (document.querySelectorAll('.carousel img').length > 0) {
+                startCarousel();
+            }
+        });
+
+        (async function init() {
+            const imageUrls = await fetchImagesFromFolder();
+            buildCarousel(imageUrls);
+        })();
+    </script>
+</body>
+</html>

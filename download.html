@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载中心 · 文件列表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-link a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        .nav-link a:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .current-path {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            font-size: 14px;
+        }
+
+        .current-path span {
+            font-weight: bold;
+            color: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .file-table thead {
+            background: #f8f9fc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .file-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .file-table th:nth-child(1) { width: 40%; }
+        .file-table th:nth-child(2) { width: 15%; }
+        .file-table th:nth-child(3) { width: 15%; }
+        .file-table th:nth-child(4) { width: 12%; }
+        .file-table th:nth-child(5) { width: 18%; }
+
+        .file-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #edf2f7;
+            color: #2d3748;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .file-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .file-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .file-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .file-name-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 6px 18px;
+            background: #0ea5e9;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 13px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .download-btn:hover {
+            background: #10b981;
+            transform: scale(1.02);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+
+        .error-message {
+            background: rgba(255, 100, 100, 0.3);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 150, 150, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 下载中心</h1>
+            <div class="nav-link">
+                <a href="index.html">🏠 返回首页</a>
+            </div>
+        </div>
+
+        <div class="current-path">
+            📂 当前位置：<span id="pathDisplay">加载中...</span>
+        </div>
+
+        <div id="fileListContainer">
+            <div class="loading">正在加载文件列表</div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 请修改以下配置 ====================
+        const CONFIG = {
+            owner: 'TidalStarNan',        // 例如 'octocat'
+            repo: 'QxwkFiles',               // 例如 'my-website'
+            branch: 'main',                  // 例如 'main' 或 'master'
+            filesPath: 'downloads',     // 存放下载文件的文件夹路径
+        };
+        // =====================================================
+
+        function extractDateFromFileName(fileName) {
+            const match = fileName.match(/^(\d{2})\.(\d{2})\.(\d{2})/);
+            if (!match) return null;
+            const year = 2000 + parseInt(match[1], 10);
+            const month = parseInt(match[2], 10) - 1;
+            const day = parseInt(match[3], 10);
+            return new Date(year, month, day);
+        }
+
+        function formatDate(date) {
+            if (!date) return '-';
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getFileTypeDescription(fileName) {
+            const ext = fileName.toLowerCase().split('.').pop();
+            const typeMap = {
+                'pdf': 'PDF 文档',
+                'doc': 'Word 文档',
+                'docx': 'Word 文档',
+                'xls': 'Excel 表格',
+                'xlsx': 'Excel 表格',
+                'ppt': 'PowerPoint 演示文稿',
+                'pptx': 'PowerPoint 演示文稿',
+                'txt': '文本文档',
+                'jpg': 'JPEG 图片',
+                'jpeg': 'JPEG 图片',
+                'png': 'PNG 图片',
+                'gif': 'GIF 图片',
+                'webp': 'WebP 图片',
+                'mp4': 'MP4 视频',
+                'mp3': 'MP3 音频',
+                'zip': '压缩文件',
+                'rar': 'RAR 压缩文件',
+                '7z': '7-Zip 压缩文件',
+                'exe': '应用程序',
+                'msi': 'Windows 安装包',
+                'dmg': 'macOS 磁盘映像',
+                'iso': '光盘映像文件',
+                'apk': 'Android 安装包',
+                'ipa': 'iOS 安装包',
+            };
+            return typeMap[ext] || `${ext.toUpperCase()} 文件`;
+        }
+
+        function getFileIcon(fileName) {
+            const ext = fileName.toLowerCase().split('.').pop();
+            const iconMap = {
+                'pdf': '📄', 'doc': '📝', 'docx': '📝', 'txt': '📃',
+                'xls': '📊', 'xlsx': '📊', 'ppt': '📽️', 'pptx': '📽️',
+                'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️',
+                'mp4': '🎬', 'mp3': '🎵', 'zip': '📦', 'rar': '📦',
+                '7z': '📦', 'exe': '⚙️', 'msi': '📀', 'dmg': '💿',
+                'iso': '💿', 'apk': '📱'
+            };
+            return iconMap[ext] || '📄';
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes || bytes === 0) return '-';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+        }
+
+        async function fetchFiles() {
+            const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.filesPath}?ref=${CONFIG.branch}`;
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`API 请求失败 (${response.status})`);
+            const data = await response.json();
+            return data.filter(item => item.type === 'file');
+        }
+
+        function renderFileList(files) {
+            const container = document.getElementById('fileListContainer');
+            const pathDisplay = document.getElementById('pathDisplay');
+            
+            pathDisplay.textContent = CONFIG.filesPath;
+
+            if (!files || files.length === 0) {
+                container.innerHTML = '<div class="empty-state">📭 该文件夹暂无文件</div>';
+                return;
+            }
+
+            const filteredFiles = files.filter(file => !file.name.startsWith('.'));
+            
+            const sortedFiles = filteredFiles.sort((a, b) => {
+                const dateA = extractDateFromFileName(a.name);
+                const dateB = extractDateFromFileName(b.name);
+                if (dateA && dateB) return dateB - dateA;
+                if (dateA && !dateB) return -1;
+                if (!dateA && dateB) return 1;
+                return b.name.localeCompare(a.name);
+            });
+
+            let html = `
+                <div class="table-container">
+                    <table class="file-table">
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>修改日期</th>
+                                <th>类型</th>
+                                <th>大小</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            sortedFiles.forEach(file => {
+                const fileName = file.name;
+                const fileDate = extractDateFromFileName(fileName);
+                const dateDisplay = fileDate ? formatDate(fileDate) : '-';
+                const typeDisplay = getFileTypeDescription(fileName);
+                const sizeDisplay = formatFileSize(file.size);
+                const icon = getFileIcon(fileName);
+                const downloadUrl = file.download_url || '#';
+                
+                html += `
+                    <tr>
+                        <td>
+                            <div class="file-name-cell">
+                                <span class="file-icon">${icon}</span>
+                                <span class="file-name-text" title="${fileName}">${fileName}</span>
+                            </div>
+                        </td>
+                        <td>${dateDisplay}</td>
+                        <td>${typeDisplay}</td>
+                        <td>${sizeDisplay}</td>
+                        <td>
+                            <a href="${downloadUrl}" class="download-btn" download="${fileName}" target="_blank">
+                                ⬇️ 下载
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function showError(message) {
+            document.getElementById('fileListContainer').innerHTML = `
+                <div class="error-message">
+                    ❌ 加载失败：${message}
+                </div>
+                <div class="empty-state">
+                    请检查配置中的 owner、repo、filesPath 是否正确，并确保文件夹存在。
+                </div>
+            `;
+            document.getElementById('pathDisplay').textContent = CONFIG.filesPath;
+        }
+
+        (async function init() {
+            try {
+                const files = await fetchFiles();
+                renderFileList(files);
+            } catch (error) {
+                showError(error.message);
+            }
+        })();
+    </script>
+</body>
+</html>
