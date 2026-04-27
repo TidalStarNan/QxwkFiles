@@ -27,9 +27,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding: 20px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -51,6 +53,39 @@
 
         .nav-link a:hover {
             background: rgba(255, 255, 255, 0.35);
+        }
+
+        /* 选项卡 */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #0ea5e9;
+            border-color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .current-path {
@@ -202,10 +237,17 @@
     <div class="container">
         <div class="header">
             <h1>📦 下载中心</h1>
-    <div class="nav-link">
-        <a href="index.html">🏠 返回首页</a>
-    </div>
-</div>
+            <div class="nav-link">
+                <a href="index.html">🏠 返回首页</a>
+            </div>
+        </div>
+
+        <!-- 选项卡：请根据自己仓库中实际存在的文件夹修改 path -->
+        <div class="tabs" id="tabBar">
+            <button class="tab-btn active" data-path="downloads">📥 下载</button>
+            <button class="tab-btn" data-path="resourcepacks">🎮 资源包</button>
+            <button class="tab-btn" data-path="textures">🎨 材质</button>
+            <!-- 可按需增加选项卡，只需设置 data-path 为对应 GitHub 文件夹 -->
         </div>
 
         <div class="current-path">
@@ -220,13 +262,17 @@
     <script>
         // ==================== 请修改以下配置 ====================
         const CONFIG = {
-            owner: 'TidalStarNan',        // 例如 'octocat'
-            repo: 'QxwkFiles',               // 例如 'my-website'
-            branch: 'main',                  // 例如 'main' 或 'master'
-            filesPath: 'downloads',     // 存放下载文件的文件夹路径
+            owner: 'TidalStarNan',        // 你的 GitHub 用户名
+            repo: 'QxwkFiles',            // 你的仓库名
+            branch: 'main',               // 分支
+            // 选项卡中的路径请与上面 HTML 中的 data-path 保持一致
         };
         // =====================================================
 
+        // 当前激活的路径
+        let currentPath = 'downloads'; // 默认选项卡
+
+        // 工具函数（与原版相同）
         function extractDateFromFileName(fileName) {
             const match = fileName.match(/^(\d{2})\.(\d{2})\.(\d{2})/);
             if (!match) return null;
@@ -247,30 +293,15 @@
         function getFileTypeDescription(fileName) {
             const ext = fileName.toLowerCase().split('.').pop();
             const typeMap = {
-                'pdf': 'PDF 文档',
-                'doc': 'Word 文档',
-                'docx': 'Word 文档',
-                'xls': 'Excel 表格',
-                'xlsx': 'Excel 表格',
-                'ppt': 'PowerPoint 演示文稿',
-                'pptx': 'PowerPoint 演示文稿',
-                'txt': '文本文档',
-                'jpg': 'JPEG 图片',
-                'jpeg': 'JPEG 图片',
-                'png': 'PNG 图片',
-                'gif': 'GIF 图片',
-                'webp': 'WebP 图片',
-                'mp4': 'MP4 视频',
-                'mp3': 'MP3 音频',
-                'zip': '压缩文件',
-                'rar': 'RAR 压缩文件',
-                '7z': '7-Zip 压缩文件',
-                'exe': '应用程序',
-                'msi': 'Windows 安装包',
-                'dmg': 'macOS 磁盘映像',
-                'iso': '光盘映像文件',
-                'apk': 'Android 安装包',
-                'ipa': 'iOS 安装包',
+                'pdf': 'PDF 文档', 'doc': 'Word 文档', 'docx': 'Word 文档',
+                'xls': 'Excel 表格', 'xlsx': 'Excel 表格', 'ppt': 'PowerPoint 演示文稿',
+                'pptx': 'PowerPoint 演示文稿', 'txt': '文本文档',
+                'jpg': 'JPEG 图片', 'jpeg': 'JPEG 图片', 'png': 'PNG 图片',
+                'gif': 'GIF 图片', 'webp': 'WebP 图片',
+                'mp4': 'MP4 视频', 'mp3': 'MP3 音频',
+                'zip': '压缩文件', 'rar': 'RAR 压缩文件', '7z': '7-Zip 压缩文件',
+                'exe': '应用程序', 'msi': 'Windows 安装包', 'dmg': 'macOS 磁盘映像',
+                'iso': '光盘映像文件', 'apk': 'Android 安装包', 'ipa': 'iOS 安装包',
             };
             return typeMap[ext] || `${ext.toUpperCase()} 文件`;
         }
@@ -296,19 +327,21 @@
             return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
         }
 
-        async function fetchFiles() {
-            const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.filesPath}?ref=${CONFIG.branch}`;
+        // 获取指定路径的文件列表
+        async function fetchFiles(filesPath) {
+            const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${filesPath}?ref=${CONFIG.branch}`;
             const response = await fetch(apiUrl);
             if (!response.ok) throw new Error(`API 请求失败 (${response.status})`);
             const data = await response.json();
             return data.filter(item => item.type === 'file');
         }
 
-        function renderFileList(files) {
+        // 渲染文件列表到表格
+        function renderFileList(files, filesPath) {
             const container = document.getElementById('fileListContainer');
             const pathDisplay = document.getElementById('pathDisplay');
             
-            pathDisplay.textContent = CONFIG.filesPath;
+            pathDisplay.textContent = filesPath;
 
             if (!files || files.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 该文件夹暂无文件</div>';
@@ -385,19 +418,45 @@
                     ❌ 加载失败：${message}
                 </div>
                 <div class="empty-state">
-                    请检查配置中的 owner、repo、filesPath 是否正确，并确保文件夹存在。
+                    请检查配置中的 owner、repo、以及当前选择的文件夹是否存在。
                 </div>
             `;
-            document.getElementById('pathDisplay').textContent = CONFIG.filesPath;
+            document.getElementById('pathDisplay').textContent = currentPath;
         }
 
-        (async function init() {
+        // 切换选项卡并重新加载
+        async function loadPath(path) {
+            currentPath = path;
+            // 显示加载中状态
+            document.getElementById('fileListContainer').innerHTML = '<div class="loading">正在加载文件列表</div>';
             try {
-                const files = await fetchFiles();
-                renderFileList(files);
+                const files = await fetchFiles(path);
+                renderFileList(files, path);
             } catch (error) {
                 showError(error.message);
             }
+        }
+
+        // 初始化选项卡点击事件
+        function setupTabs() {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有 active 样式
+                    buttons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // 获取路径并加载
+                    const path = this.getAttribute('data-path');
+                    if (path) loadPath(path);
+                });
+            });
+        }
+
+        // 页面启动：加载默认选项卡
+        (async function init() {
+            setupTabs();
+            // 默认加载当前 active 按钮对应的路径（downloads）
+            await loadPath(currentPath);
         })();
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎访问青翔未阔工作室官网</title>
+    <title>青翔未阔工作室</title>
     <style>
         * {
             margin: 0;
@@ -11,37 +11,29 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #111;
+        }
+
+        /* 全屏背景图片区域 */
+        .hero {
+            position: relative;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             overflow: hidden;
         }
 
-        .carousel {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .carousel img {
+        .hero img {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-            pointer-events: none;
         }
 
-        .carousel img.active {
-            opacity: 1;
-            z-index: 1;
-        }
-
-        /* 欢迎文字 + 一言 + 副标题 区域 */
-        .welcome-content {
+        .hero-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -54,32 +46,30 @@
             padding: 30px 50px;
             border-radius: 12px;
             backdrop-filter: blur(5px);
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             max-width: 700px;
             width: 90%;
         }
 
-        .welcome-content h1 {
+        .hero-overlay h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
             letter-spacing: 4px;
         }
 
-        .welcome-content .subtitle {
+        .hero-overlay .subtitle {
             font-size: 1.2rem;
             margin-bottom: 20px;
             opacity: 0.9;
             font-weight: 400;
             letter-spacing: 2px;
-            color: white;
         }
 
-        .welcome-content .saying-box {
+        .saying-box {
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.3);
             font-size: 1.1rem;
             opacity: 0.95;
-            min-height: 60px;
+            min-height: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -98,226 +88,151 @@
             opacity: 0.7;
         }
 
-        .carousel-dots {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: flex;
-            gap: 12px;
+        /* 下方功能区 */
+        .section {
+            padding: 60px 20px;
+            background: #f8fafc;
+            min-height: 50vh;
         }
 
-        .carousel-dots .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .carousel-dots .dot.active {
+        .section h2 {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
             background: white;
-            transform: scale(1.3);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-        }
-
-        .nav-bar {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            z-index: 20;
-            display: flex;
-            gap: 12px;
-        }
-
-        .nav-bar a {
-            color: white;
+            border-radius: 16px;
+            padding: 30px 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.2s;
             text-decoration: none;
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 30px;
-            font-size: 16px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s;
-            font-family: 'Segoe UI', sans-serif;
+            color: #1e293b;
+            display: block;
         }
 
-        .nav-bar a:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: white;
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .loading-tip {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            color: rgba(255, 255, 255, 0.7);
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
             font-size: 14px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 6px 16px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
         }
     </style>
 </head>
 <body>
-    <div class="carousel" id="carousel"></div>
-    <div class="carousel-dots" id="carouselDots"></div>
-    <div class="loading-tip" id="loadingTip">加载图片中...</div>
-    
-    <div class="welcome-content">
-        <h1>欢迎访问</h1>
-        <p class="subtitle">青翔未阔工作室官网</p>
-        <div class="saying-box" id="sayingBox">
-            <div class="saying-text" id="sayingText">✨ 正在加载一言...</div>
-            <div class="saying-meta" id="sayingMeta"></div>
+    <!-- 全屏背景图 -->
+    <div class="hero">
+        <!-- 直接使用必应每日壁纸 API 作为图片源 -->
+        <img src="https://uapis.cn/api/v1/image/bing-daily?resolution=1080" alt="必应每日壁纸" id="bgImage">
+        <div class="hero-overlay">
+            <h1>欢迎访问</h1>
+            <p class="subtitle">青翔未阔工作室官网</p>
+            <div class="saying-box">
+                <div class="saying-text" id="sayingText">✨ 正在加载一言...</div>
+                <div class="saying-meta" id="sayingMeta"></div>
+            </div>
         </div>
     </div>
 
-    <div class="nav-bar">
-        <a href="download.html">📥 下载中心</a>
-        <a href="mc-status.html">🎮 MC状态</a>
+    <!-- 下方可滚动功能区 -->
+    <div class="section">
+        <div class="container">
+            <h2>快速导航</h2>
+            <div class="grid">
+                <a href="download.html" class="card">
+                    <div class="card-icon">📥</div>
+                    <h3>下载中心</h3>
+                    <p>获取工作室资源与工具</p>
+                </a>
+                <a href="mc-status.html" class="card">
+                    <div class="card-icon">🎮</div>
+                    <h3>MC 状态</h3>
+                    <p>查看 Minecraft 服务器状态</p>
+                </a>
+		<a href="about.html" class="card">
+                    <div class="card-icon">ℹ️</div>
+                    <h3>关于我们</h3>
+                    <p>了解更多工作室信息</p>
+                </a>
+   		<a href="mailto:QxwkStudio@outlook.com" class="card">
+                    <div class="card-icon">📬</div>
+                    <h3>联系我们</h3>
+                    <p>发送邮件给我们</p>
+                </a>
+                <a href="error.html" class="card">
+                    <div class="card-icon">📅</div>
+                    <h3>活动公告</h3>
+                    <p>即将推出</p>
+                </a>
+                <a href="error.html" class="card">
+                    <div class="card-icon">🛠️</div>
+                    <h3>更多功能</h3>
+                    <p>即将推出</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        2018-2026 青翔未阔工作室
     </div>
 
     <script>
-        // ==================== 请修改以下配置 ====================
-        const CONFIG = {
-            owner: 'TidalStarNan',        // 例如 'octocat'
-            repo: 'QxwkFiles',               // 例如 'my-website'
-            branch: 'main',                  // 例如 'main' 或 'master'
-            imagesPath: 'background', // 存放背景图片的文件夹路径
-            switchInterval: 5000,            // 轮播切换间隔（毫秒）
-        };
-        // =====================================================
-
-        let currentIndex = 0;
-        let intervalId = null;
-
-        const carousel = document.getElementById('carousel');
-        const dotsContainer = document.getElementById('carouselDots');
-        const loadingTip = document.getElementById('loadingTip');
-
-        // ---------- 一言 API ----------
-        const sayingText = document.getElementById('sayingText');
-        const sayingMeta = document.getElementById('sayingMeta');
-
-        async function fetchSaying() {
+        // 一言 API（新接口）
+        (async function fetchSaying() {
+            const sayingText = document.getElementById('sayingText');
+            const sayingMeta = document.getElementById('sayingMeta');
             try {
                 const response = await fetch('https://uapis.cn/api/v1/saying');
-                if (!response.ok) throw new Error('API 请求失败');
+                if (!response.ok) throw new Error('请求失败');
                 const data = await response.json();
                 sayingText.textContent = data.text || '“无论多么微小的邂逅，都必定有着某种意义。”';
-                sayingMeta.textContent = '—— 一言 · 每日灵感';
+                sayingMeta.textContent = '—— 一言';
             } catch (error) {
-                console.warn('一言加载失败，使用默认语句', error);
+                console.warn('一言加载失败', error);
                 sayingText.textContent = '“无论多么微小的邂逅，都必定有着某种意义。”';
                 sayingMeta.textContent = '—— 一言 · 离线模式';
             }
-        }
-
-        // ---------- 图片轮播 ----------
-        async function fetchImagesFromFolder() {
-            const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.imagesPath}?ref=${CONFIG.branch}`;
-            
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`API 请求失败: ${response.status}`);
-                }
-                const data = await response.json();
-                
-                const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
-                const imageFiles = data.filter(item => {
-                    if (item.type !== 'file') return false;
-                    const name = item.name.toLowerCase();
-                    return imageExtensions.some(ext => name.endsWith(ext));
-                });
-
-                return imageFiles.map(file => file.download_url);
-            } catch (error) {
-                console.error('获取图片失败:', error);
-                loadingTip.textContent = '图片加载失败，请检查配置或网络';
-                return [];
-            }
-        }
-
-        function buildCarousel(imageUrls) {
-            if (imageUrls.length === 0) {
-                loadingTip.textContent = '未找到图片，请确保 background 文件夹中有图片';
-                return;
-            }
-
-            carousel.innerHTML = '';
-            dotsContainer.innerHTML = '';
-
-            imageUrls.forEach((url, index) => {
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = `背景图片 ${index + 1}`;
-                if (index === 0) img.classList.add('active');
-                carousel.appendChild(img);
-            });
-
-            imageUrls.forEach((_, index) => {
-                const dot = document.createElement('span');
-                dot.classList.add('dot');
-                if (index === 0) dot.classList.add('active');
-                dot.addEventListener('click', () => switchToImage(index));
-                dotsContainer.appendChild(dot);
-            });
-
-            loadingTip.style.display = 'none';
-            startCarousel();
-        }
-
-        function switchToImage(index) {
-            const imgs = document.querySelectorAll('.carousel img');
-            const dots = document.querySelectorAll('.dot');
-            
-            if (imgs.length === 0) return;
-
-            imgs[currentIndex].classList.remove('active');
-            dots[currentIndex].classList.remove('active');
-
-            currentIndex = index;
-            imgs[currentIndex].classList.add('active');
-            dots[currentIndex].classList.add('active');
-        }
-
-        function nextImage() {
-            const imgs = document.querySelectorAll('.carousel img');
-            if (imgs.length === 0) return;
-            const nextIndex = (currentIndex + 1) % imgs.length;
-            switchToImage(nextIndex);
-        }
-
-        function startCarousel() {
-            if (intervalId) clearInterval(intervalId);
-            intervalId = setInterval(nextImage, CONFIG.switchInterval);
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                clearInterval(intervalId);
-                intervalId = null;
-            } else if (document.querySelectorAll('.carousel img').length > 0) {
-                startCarousel();
-            }
-        });
-
-        // ---------- 初始化 ----------
-        (async function init() {
-            // 并行加载一言和图片（互不阻塞）
-            fetchSaying();
-            const imageUrls = await fetchImagesFromFolder();
-            buildCarousel(imageUrls);
         })();
+
+        // 背景图片加载失败时的降级处理（可选）
+        document.getElementById('bgImage').addEventListener('error', function() {
+            this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080"%3E%3Crect fill="%23222" width="1920" height="1080"/%3E%3Ctext fill="white" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E壁纸加载失败%3C/text%3E%3C/svg%3E';
+        });
     </script>
 </body>
 </html>
