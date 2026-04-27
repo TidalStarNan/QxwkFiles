@@ -211,47 +211,25 @@
     </div>
 
     <script>
-        // 一言 API（CORS 代理兜底）
+        // 一言 API —— 使用官方 Hitokoto 接口（支持 CORS）
         (async function fetchSaying() {
             const sayingText = document.getElementById('sayingText');
             const sayingMeta = document.getElementById('sayingMeta');
 
-            const fallbackText = '“无论多么微小的邂逅，都必定有着某种意义。”';
-            const fallbackMeta = '—— 一言 · 离线模式';
-
-            // 尝试1：直接调用
             try {
-                const response = await fetch('https://uapis.cn/api/v1/saying');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.text) {
-                        sayingText.textContent = data.text;
-                        sayingMeta.textContent = '—— 一言';
-                        return;
-                    }
-                }
-            } catch (e) { /* 静默失败 */ }
-
-            // 尝试2：CORS 代理
-            try {
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://uapis.cn/api/v1/saying');
-                const response = await fetch(proxyUrl);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.text) {
-                        sayingText.textContent = data.text;
-                        sayingMeta.textContent = '—— 一言';
-                        return;
-                    }
-                }
-            } catch (e) { /* 静默失败 */ }
-
-            // 最终降级
-            sayingText.textContent = fallbackText;
-            sayingMeta.textContent = fallbackMeta;
+                const response = await fetch('https://v1.hitokoto.cn/');
+                if (!response.ok) throw new Error('请求失败');
+                const data = await response.json();
+                sayingText.textContent = data.hitokoto || '“无论多么微小的邂逅，都必定有着某种意义。”';
+                sayingMeta.textContent = '—— ' + (data.from || '一言');
+            } catch (error) {
+                console.warn('一言加载失败', error);
+                sayingText.textContent = '“无论多么微小的邂逅，都必定有着某种意义。”';
+                sayingMeta.textContent = '—— 一言 · 离线模式';
+            }
         })();
 
-        // 背景图片加载失败的降级处理（可选）
+        // 背景图片加载失败的降级处理
         document.getElementById('bgImage').addEventListener('error', function() {
             this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080"%3E%3Crect fill="%23222" width="1920" height="1080"/%3E%3Ctext fill="white" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E壁纸加载失败%3C/text%3E%3C/svg%3E';
         });

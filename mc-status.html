@@ -354,7 +354,7 @@
         </div>
 
         <div class="footer-note">
-            ⚡ 数据由 uapis.cn 提供 · 查询可能存在缓存
+            ⚡ 数据由 Minecraft ServerHub 与 mcsrvstat.us 提供
         </div>
     </div>
 
@@ -379,7 +379,11 @@
         const playersListContainer = document.getElementById('playersListContainer');
         const playersList = document.getElementById('playersList');
 
-        const API_BASE = 'https://uapis.cn/api/v1/game/minecraft/serverstatus';
+        // 新 API 列表 (按优先级排列，均支持 CORS)
+        const API_LIST = [
+            (host) => `https://api.mcsrvstat.us/3/${host}`,
+            (host) => `https://minecraft-serverhub.com/api/ping?host=${host}&platform=java`,
+        ];
 
         async function queryServer(serverAddressRaw) {
             if (!serverAddressRaw.trim()) {
@@ -392,46 +396,44 @@
             initialPlaceholder.classList.add('hidden');
             errorView.classList.add('hidden');
 
-            const baseUrl = `${API_BASE}?server=${encodeURIComponent(serverAddressRaw.trim())}`;
-            let data = null;
+            const host = serverAddressRaw.trim();
+            let lastError = null;
 
-            // 尝试直连
-            try {
-                const response = await fetch(baseUrl);
-                if (response.ok) {
-                    data = await response.json();
-                } else {
-                    let errorMsg = `请求失败 (${response.status})`;
-                    try {
-                        const errData = await response.json();
-                        errorMsg = errData.message || errorMsg;
-                    } catch (e) {}
-                    throw new Error(errorMsg);
-                }
-            } catch (err) {
-                // 尝试 CORS 代理
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(baseUrl);
+            for (const urlBuilder of API_LIST) {
                 try {
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) {
-                        let errorMsg = `代理请求失败 (${response.status})`;
-                        try {
-                            const errData = await response.json();
-                            errorMsg = errData.message || errorMsg;
-                        } catch (e) {}
-                        throw new Error(errorMsg);
-                    }
-                    data = await response.json();
-                } catch (proxyErr) {
-                    loadingView.classList.add('hidden');
-                    errorView.classList.remove('hidden');
-                    errorView.textContent = `❌ 查询失败: ${proxyErr.message}`;
-                    resultView.classList.remove('hidden');
+                    const url = urlBuilder(host);
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`API ${response.status}`);
+                    const raw = await response.json();
+                    const data = normalizeData(raw);
+                    if (!data.online && data.error) throw new Error(data.error);
+                    renderResult(data, host);
                     return;
+                } catch (err) {
+                    lastError = err;
                 }
             }
 
-            renderResult(data, serverAddressRaw.trim());
+            loadingView.classList.add('hidden');
+            errorView.classList.remove('hidden');
+            errorView.textContent = `❌ 查询失败: ${lastError ? lastError.message : '无法连接任何 API'}`;
+            resultView.classList.remove('hidden');
+        }
+
+        function normalizeData(raw) {
+            // 统一来自不同 API 的数据格式
+            const online = raw.online === true;
+            const players = raw.players && (raw.players.online !== undefined) ? raw.players.online : (raw.players ?? null);
+            const max = raw.players && (raw.players.max !== undefined) ? raw.players.max : (raw.max_players ?? null);
+            const version = raw.version || (raw.protocol && raw.protocol.name) || null;
+            const motdHtml = Array.isArray(raw.motd && raw.motd.html) ? raw.motd.html.join('<br>') : (raw.motd_html || null);
+            const motdClean = Array.isArray(raw.motd && raw.motd.clean) ? raw.motd.clean.join('\n') : (raw.motd_clean || null);
+            const favicon = raw.icon || raw.favicon || raw.favicon_url || null;
+            const ip = raw.ip || raw.hostname || null;
+            const port = raw.port || 25565;
+            const playersList = (raw.players && raw.players.list) ? raw.players.list.map(p => ({ name: p.name || p })) : ((raw.online_players) ? raw.online_players : []);
+
+            return { online, players, max, version, motdHtml, motdClean, favicon, ip, port, online_players: playersList };
         }
 
         function renderResult(data, queriedAddress) {
@@ -446,8 +448,8 @@
             statusBadge.textContent = isOnline ? '在线' : '离线';
             statusBadge.className = `status-badge ${isOnline ? 'online' : 'offline'}`;
 
-            if (data.favicon_url) {
-                iconImg.src = data.favicon_url;
+            if (data.favicon) {
+                iconImg.src = data.favicon;
                 iconImg.style.display = 'block';
                 noIconPlaceholder.style.display = 'none';
             } else {
@@ -456,14 +458,14 @@
             }
 
             if (isOnline) {
-                playerCount.textContent = data.players !== undefined ? data.players : '-';
-                maxPlayers.textContent = data.max_players !== undefined ? data.max_players : '-';
+                playerCount.textContent = data.players !== null ? data.players : '-';
+                maxPlayers.textContent = data.max !== null ? data.max : '-';
                 versionInfo.textContent = data.version || '-';
                 
-                if (data.motd_html) {
-                    motdDisplay.innerHTML = data.motd_html;
+                if (data.motdHtml) {
+                    motdDisplay.innerHTML = data.motdHtml;
                 } else {
-                    motdDisplay.textContent = data.motd_clean || '-';
+                    motdDisplay.textContent = data.motdClean || '-';
                 }
 
                 if (data.online_players && data.online_players.length > 0) {
