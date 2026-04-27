@@ -244,9 +244,8 @@
 
         <!-- 选项卡：请根据自己仓库中实际存在的文件夹修改 path -->
         <div class="tabs" id="tabBar">
-            <button class="tab-btn active" data-path="downloads">📥 下载</button>
-            <button class="tab-btn" data-path="resourcepacks">🎮 资源包</button>
-            <button class="tab-btn" data-path="textures">🎨 材质</button>
+            <button class="tab-btn active" data-path="mcpack-yz">📥一中整合包下载</button>
+            <button class="tab-btn" data-path="test">🎮未定文件夹</button>
             <!-- 可按需增加选项卡，只需设置 data-path 为对应 GitHub 文件夹 -->
         </div>
 
@@ -270,7 +269,7 @@
         // =====================================================
 
         // 当前激活的路径
-        let currentPath = 'downloads'; // 默认选项卡
+        let currentPath = 'mcpack-yz'; // 默认选项卡
 
         // 工具函数（与原版相同）
         function extractDateFromFileName(fileName) {
