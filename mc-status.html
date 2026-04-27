@@ -392,11 +392,15 @@
             initialPlaceholder.classList.add('hidden');
             errorView.classList.add('hidden');
 
+            const baseUrl = `${API_BASE}?server=${encodeURIComponent(serverAddressRaw.trim())}`;
+            let data = null;
+
+            // 尝试直连
             try {
-                const url = `${API_BASE}?server=${encodeURIComponent(serverAddressRaw.trim())}`;
-                const response = await fetch(url);
-                
-                if (!response.ok) {
+                const response = await fetch(baseUrl);
+                if (response.ok) {
+                    data = await response.json();
+                } else {
                     let errorMsg = `请求失败 (${response.status})`;
                     try {
                         const errData = await response.json();
@@ -404,16 +408,30 @@
                     } catch (e) {}
                     throw new Error(errorMsg);
                 }
-
-                const data = await response.json();
-                renderResult(data, serverAddressRaw.trim());
-            } catch (error) {
-                console.error('查询失败:', error);
-                loadingView.classList.add('hidden');
-                errorView.classList.remove('hidden');
-                errorView.textContent = `❌ 查询失败: ${error.message}`;
-                resultView.classList.remove('hidden');
+            } catch (err) {
+                // 尝试 CORS 代理
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(baseUrl);
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) {
+                        let errorMsg = `代理请求失败 (${response.status})`;
+                        try {
+                            const errData = await response.json();
+                            errorMsg = errData.message || errorMsg;
+                        } catch (e) {}
+                        throw new Error(errorMsg);
+                    }
+                    data = await response.json();
+                } catch (proxyErr) {
+                    loadingView.classList.add('hidden');
+                    errorView.classList.remove('hidden');
+                    errorView.textContent = `❌ 查询失败: ${proxyErr.message}`;
+                    resultView.classList.remove('hidden');
+                    return;
+                }
             }
+
+            renderResult(data, serverAddressRaw.trim());
         }
 
         function renderResult(data, queriedAddress) {
