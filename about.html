@@ -12,13 +12,13 @@
         }
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            background: linear-gradient(135deg, #6bb3d9 0%, #6fc0b0 100%);
             min-height: 100vh;
             padding: 40px 20px;
             color: white;
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         .header {
@@ -75,6 +75,15 @@
             background: rgba(255,255,255,0.3);
             transform: translateY(-4px);
         }
+        /* 全宽卡片（用于工作室简介） */
+        .member-card.full-width {
+            grid-column: 1 / -1;
+        }
+        .member-card .full-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
         .member-avatar {
             width: 60px;
             height: 60px;
@@ -107,11 +116,9 @@
             word-break: break-word;
         }
 
-        /* 手机端优化：卡片始终左图右文，不变成上下排列 */
         @media (max-width: 600px) {
             .member-card {
-                /* 保持水平布局，不做任何改动 */
-                flex-direction: row; /* 显式设置，确保安全 */
+                flex-direction: row;
                 align-items: center;
             }
             .member-avatar {
@@ -137,6 +144,16 @@
             </div>
         </div>
 
+        <!-- 关于工作室（全宽卡片） -->
+        <div class="team-section">
+            <h2>📖 关于工作室</h2>
+            <div class="member-grid">
+                <div class="member-card full-width">
+                    <div class="full-text">这个工作室很懒，什么也没有写。</div>
+                </div>
+            </div>
+        </div>
+
         <!-- 摸鱼成员 -->
         <div class="team-section">
             <h2>🎣 摸鱼成员</h2>
@@ -151,67 +168,20 @@
     </div>
 
     <script>
-        // 摸鱼成员
         const coreMembers = [
-            {
-                name: '青翔未阔',
-                desc: '工作室创始人',
-                avatar: 'https://weavatar.com/avatar/8493cacb76284a997ac75cf43bbd8a2ab3f1ee9127250f5ead7086a741e51f00?s=400'
-            },
-            {
-                name: '米可-Micro',
-                desc: '工作室联合创始人',
-                avatar: 'https://weavatar.com/avatar/97519024b6678a197130591df9a76e6a6d80bd0d7aecd2b074dafee1dbc2512b?s=400'
-            },
-            {
-                name: '心态不爱打牌',
-                desc: '工作室联合创始人',
-                avatar: 'https://weavatar.com/avatar/473bdd519211e37b2b31bd3231b81aa50ad8f5fdbc956d6087cc956f320f98be?s=400'
-            },
-            {
-                name: '幻想繁星',
-                desc: '工作室联合创始人',
-                avatar: 'https://weavatar.com/avatar/0a258e851779fecdff48b0594af16eaaf280bbc06281bc4e35cd7e3e8a44068b?s=400'
-            },
-            {
-                name: '阿江_233',
-                desc: '首席指令师 & 建筑师',
-                avatar: 'https://weavatar.com/avatar/e660bc25449e3cd818d29339cc66c6dd2c454bee03dd8c1f861d62e578f533ff?s=400'
-            },
-            {
-                name: 'SG',
-                desc: 'man~',
-                avatar: ''
-            }
+            { name: '青翔未阔', desc: '工作室创始人', avatar: 'https://weavatar.com/avatar/8493cacb76284a997ac75cf43bbd8a2ab3f1ee9127250f5ead7086a741e51f00?s=400' },
+            { name: '米可-Micro', desc: '工作室联合创始人', avatar: 'https://weavatar.com/avatar/97519024b6678a197130591df9a76e6a6d80bd0d7aecd2b074dafee1dbc2512b?s=400' },
+            { name: '心态不爱打牌', desc: '工作室联合创始人', avatar: 'https://weavatar.com/avatar/473bdd519211e37b2b31bd3231b81aa50ad8f5fdbc956d6087cc956f320f98be?s=400' },
+            { name: '幻想繁星', desc: '工作室联合创始人', avatar: 'https://weavatar.com/avatar/0a258e851779fecdff48b0594af16eaaf280bbc06281bc4e35cd7e3e8a44068b?s=400' },
+            { name: '阿江_233', desc: '首席指令师 & 建筑师', avatar: 'https://weavatar.com/avatar/e660bc25449e3cd818d29339cc66c6dd2c454bee03dd8c1f861d62e578f533ff?s=400' },
+            { name: 'SG', desc: '建筑师&技术支持', avatar: '' }
         ];
-
-        // 特别贡献
         const contribMembers = [
-            {
-                name: '青翔熙亦',
-                desc: '',
-                avatar: ''
-            },
-            {
-                name: '笨蛋小鞠子',
-                desc: '建筑师 & 重工业爱好者',
-                avatar: 'https://weavatar.com/avatar/6cdcb6920a64c3558c0e16158a15e855946c4e09504077771164b9fa1f49fa23?s=400'
-            },
-            {
-                name: '念帆AsheL',
-                desc: '建筑师 & 成分复杂',
-                avatar: 'https://weavatar.com/avatar/368f1711a5824be33c1120ab619b35d990f05387c263ad862dc91be8806c06b5?s=400'
-            },
-            {
-                name: '358k3',
-                desc: '建筑师 & 萌新主播',
-                avatar: 'https://weavatar.com/avatar/9facc2555a3d37ed0301bf920173a19427cd5fb459d4a0686e89f3e90c78f5a9?s=400'
-            },
-            {
-                name: '风抚落意尘',
-                desc: '喵？',
-                avatar: 'https://weavatar.com/avatar/52f7cdc7cf35de19c3a08e7255409a7d878db720c93be0b40badd8321cd85250?s=400'
-            }
+            { name: '青翔熙亦', desc: '不知道写什么比较好', avatar: 'https://weavatar.com/avatar/ec8877cd68a143a1e0758d3ebaee9a5e46f0a941f1b694ada2dbc59a025fa0c3?s=400' },
+            { name: '笨蛋小鞠子', desc: '建筑师 & 重工业爱好者', avatar: 'https://weavatar.com/avatar/6cdcb6920a64c3558c0e16158a15e855946c4e09504077771164b9fa1f49fa23?s=400' },
+            { name: '念帆AsheL', desc: '建筑师 & 成分复杂', avatar: 'https://weavatar.com/avatar/368f1711a5824be33c1120ab619b35d990f05387c263ad862dc91be8806c06b5?s=400' },
+            { name: '358k3', desc: '建筑师 & 萌新主播', avatar: 'https://weavatar.com/avatar/9facc2555a3d37ed0301bf920173a19427cd5fb459d4a0686e89f3e90c78f5a9?s=400' },
+            { name: '风抚落意尘', desc: '喵？', avatar: 'https://weavatar.com/avatar/52f7cdc7cf35de19c3a08e7255409a7d878db720c93be0b40badd8321cd85250?s=400' }
         ];
 
         function renderMembers(containerId, members) {
@@ -233,8 +203,7 @@
                             <div class="member-name">${escapeHtml(member.name)}</div>
                             <div class="member-desc">${escapeHtml(member.desc)}</div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             container.innerHTML = html;
         }

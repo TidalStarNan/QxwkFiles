@@ -93,52 +93,68 @@
             <p class="text-13">
                 <span class="cf-footer-item sm:block sm:mb-1">Ray ID：<strong class="font-semibold">1145141919810</strong></span>
                 <span class="cf-footer-separator sm:hidden">&bull;</span>
-                <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
-                    您的IP：
-                    <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">点击显示</button>
-                    <span class="hidden" id="cf-footer-ip">127.0.0.1</span>
+                <span class="cf-footer-item sm:block sm:mb-1">
+                    您的IP：127.0.0.1
                     <span class="cf-footer-separator sm:hidden">&bull;</span>
                 </span>
-                
                 <span class="cf-footer-item sm:block sm:mb-1"><span>性能与安全由</span> <a rel="noopener noreferrer" href="https://tidalstarnan.github.io/QxwkFiles/index.html" id="brand_link" target="_blank">QxwkFiles</a> 提供</span>
             </p>
         </div><!-- /.error-footer -->
     </div>
 </div>
-<script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
-<!-- 直接调用 uapis.cn 世界时间接口 -->
+
 <script>
+// 实时同步 UTC 时间
 (function() {
     var timeElement = document.querySelector('header .mt-3');
     if (!timeElement) return;
 
-    // 使用 uapis.cn 的 worldtime 接口，参数 city=Etc/UTC 表示世界标准时间
-    var apiUrl = 'https://uapis.cn/api/v1/misc/worldtime?city=Etc/UTC';
+    var offset = 0;
+    var syncing = false;
 
-    fetch(apiUrl, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-    })
-    .then(function(response) {
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        return response.json();
-    })
-    .then(function(data) {
-        if (data && typeof data.datetime === 'string') {
-            // 提取日期时间字符串，格式如 "2023-10-27T15:30:00.123456+08:00"
-            var datetimeRaw = data.datetime;
-            // 只保留到秒的部分，替换 T 为空格
-            var cleanedDateTime = datetimeRaw.substring(0, 19).replace('T', ' ');
-            var formattedTime = cleanedDateTime + ' UTC';
-            timeElement.textContent = formattedTime;
-        }
-    })
-    .catch(function(err) {
-        // 静默失败：保留页面原有的静态时间，不影响页面显示
-        if (window.console && console.warn) {
-            console.warn('世界时间获取失败，保留原时间:', err.message);
-        }
-    });
+    function updateDisplay() {
+        var now = Date.now() + offset;
+        var d = new Date(now);
+        var y = d.getUTCFullYear();
+        var mo = String(d.getUTCMonth() + 1).padStart(2, '0');
+        var day = String(d.getUTCDate()).padStart(2, '0');
+        var h = String(d.getUTCHours()).padStart(2, '0');
+        var mi = String(d.getUTCMinutes()).padStart(2, '0');
+        var s = String(d.getUTCSeconds()).padStart(2, '0');
+        timeElement.textContent = y + '-' + mo + '-' + day + ' ' + h + ':' + mi + ':' + s + ' UTC';
+    }
+
+    function syncTime() {
+        if (syncing) return;
+        syncing = true;
+        fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC')
+            .then(function(response) {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(function(data) {
+                var serverTime = Date.UTC(
+                    data.year,
+                    data.month - 1,
+                    data.day,
+                    data.hour,
+                    data.minute,
+                    data.seconds,
+                    data.milliSeconds || 0
+                );
+                offset = serverTime - Date.now();
+                updateDisplay();
+            })
+            .catch(function(err) {
+                console.warn('时间同步失败:', err.message);
+            })
+            .finally(function() {
+                syncing = false;
+            });
+    }
+
+    syncTime();
+    setInterval(updateDisplay, 1000);
 })();
 </script>
 </body>

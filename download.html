@@ -10,19 +10,16 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            background: linear-gradient(135deg, #6bb3d9 0%, #6fc0b0 100%);
             min-height: 100vh;
             padding: 30px 20px;
         }
-
         .container {
-            max-width: 1300px;
+            max-width: 1000px;
             margin: 0 auto;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -33,13 +30,11 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-
         .header h1 {
             color: white;
             font-size: 2.2rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
-
         .nav-link a {
             color: white;
             text-decoration: none;
@@ -50,19 +45,15 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(4px);
         }
-
         .nav-link a:hover {
             background: rgba(255, 255, 255, 0.35);
         }
-
-        /* 选项卡 */
         .tabs {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
-
         .tab-btn {
             padding: 10px 24px;
             background: rgba(255, 255, 255, 0.2);
@@ -75,11 +66,9 @@
             transition: all 0.3s;
             font-weight: 500;
         }
-
         .tab-btn:hover {
             background: rgba(255, 255, 255, 0.35);
         }
-
         .tab-btn.active {
             background: white;
             color: #0ea5e9;
@@ -87,7 +76,6 @@
             font-weight: 600;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-
         .current-path {
             background: rgba(255, 255, 255, 0.15);
             padding: 12px 20px;
@@ -97,30 +85,25 @@
             backdrop-filter: blur(4px);
             font-size: 14px;
         }
-
         .current-path span {
             font-weight: bold;
             color: white;
         }
-
         .table-container {
             background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
-
         .file-table {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
         }
-
         .file-table thead {
             background: #f8f9fc;
             border-bottom: 2px solid #e2e8f0;
         }
-
         .file-table th {
             padding: 14px 20px;
             text-align: left;
@@ -130,13 +113,11 @@
             letter-spacing: 0.3px;
             white-space: nowrap;
         }
-
         .file-table th:nth-child(1) { width: 40%; }
         .file-table th:nth-child(2) { width: 15%; }
         .file-table th:nth-child(3) { width: 15%; }
         .file-table th:nth-child(4) { width: 12%; }
         .file-table th:nth-child(5) { width: 18%; }
-
         .file-table td {
             padding: 14px 20px;
             border-bottom: 1px solid #edf2f7;
@@ -144,35 +125,29 @@
             font-size: 14px;
             vertical-align: middle;
         }
-
         .file-table tbody tr:hover {
             background: #f7fafc;
         }
-
         .file-table tbody tr:last-child td {
             border-bottom: none;
         }
-
         .file-name-cell {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .file-icon {
             font-size: 20px;
             width: 24px;
             text-align: center;
             flex-shrink: 0;
         }
-
         .file-name-text {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             font-weight: 500;
         }
-
         .download-btn {
             display: inline-block;
             padding: 6px 18px;
@@ -186,19 +161,16 @@
             cursor: pointer;
             white-space: nowrap;
         }
-
         .download-btn:hover {
             background: #10b981;
             transform: scale(1.02);
         }
-
         .loading {
             text-align: center;
             padding: 60px;
             color: white;
             font-size: 18px;
         }
-
         .loading::after {
             content: '';
             display: inline-block;
@@ -210,18 +182,13 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         .empty-state {
             text-align: center;
             padding: 60px;
             color: rgba(255, 255, 255, 0.8);
             font-size: 16px;
         }
-
         .error-message {
             background: rgba(255, 100, 100, 0.3);
             color: white;
@@ -241,37 +208,24 @@
                 <a href="index.html">🏠 返回首页</a>
             </div>
         </div>
-
-        <!-- 选项卡：请根据自己仓库中实际存在的文件夹修改 path -->
         <div class="tabs" id="tabBar">
             <button class="tab-btn active" data-path="mcpack-yz">📥一中整合包下载</button>
             <button class="tab-btn" data-path="test">🎮未定文件夹</button>
-            <!-- 可按需增加选项卡，只需设置 data-path 为对应 GitHub 文件夹 -->
         </div>
-
         <div class="current-path">
             📂 当前位置：<span id="pathDisplay">加载中...</span>
         </div>
-
         <div id="fileListContainer">
             <div class="loading">正在加载文件列表</div>
         </div>
     </div>
-
     <script>
-        // ==================== 请修改以下配置 ====================
         const CONFIG = {
-            owner: 'TidalStarNan',        // 你的 GitHub 用户名
-            repo: 'QxwkFiles',            // 你的仓库名
-            branch: 'main',               // 分支
-            // 选项卡中的路径请与上面 HTML 中的 data-path 保持一致
+            owner: 'TidalStarNan',
+            repo: 'QxwkFiles',
+            branch: 'main',
         };
-        // =====================================================
-
-        // 当前激活的路径
-        let currentPath = 'mcpack-yz'; // 默认选项卡
-
-        // 工具函数（与原版相同）
+        let currentPath = 'mcpack-yz';
         function extractDateFromFileName(fileName) {
             const match = fileName.match(/^(\d{2})\.(\d{2})\.(\d{2})/);
             if (!match) return null;
@@ -280,7 +234,6 @@
             const day = parseInt(match[3], 10);
             return new Date(year, month, day);
         }
-
         function formatDate(date) {
             if (!date) return '-';
             const year = date.getFullYear();
@@ -288,7 +241,6 @@
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-
         function getFileTypeDescription(fileName) {
             const ext = fileName.toLowerCase().split('.').pop();
             const typeMap = {
@@ -304,7 +256,6 @@
             };
             return typeMap[ext] || `${ext.toUpperCase()} 文件`;
         }
-
         function getFileIcon(fileName) {
             const ext = fileName.toLowerCase().split('.').pop();
             const iconMap = {
@@ -317,7 +268,6 @@
             };
             return iconMap[ext] || '📄';
         }
-
         function formatFileSize(bytes) {
             if (!bytes || bytes === 0) return '-';
             if (bytes < 1024) return bytes + ' B';
@@ -325,8 +275,6 @@
             if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
             return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
         }
-
-        // 获取指定路径的文件列表
         async function fetchFiles(filesPath) {
             const apiUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${filesPath}?ref=${CONFIG.branch}`;
             const response = await fetch(apiUrl);
@@ -334,21 +282,15 @@
             const data = await response.json();
             return data.filter(item => item.type === 'file');
         }
-
-        // 渲染文件列表到表格
         function renderFileList(files, filesPath) {
             const container = document.getElementById('fileListContainer');
             const pathDisplay = document.getElementById('pathDisplay');
-            
             pathDisplay.textContent = filesPath;
-
             if (!files || files.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 该文件夹暂无文件</div>';
                 return;
             }
-
             const filteredFiles = files.filter(file => !file.name.startsWith('.'));
-            
             const sortedFiles = filteredFiles.sort((a, b) => {
                 const dateA = extractDateFromFileName(a.name);
                 const dateB = extractDateFromFileName(b.name);
@@ -357,7 +299,6 @@
                 if (!dateA && dateB) return 1;
                 return b.name.localeCompare(a.name);
             });
-
             let html = `
                 <div class="table-container">
                     <table class="file-table">
@@ -370,9 +311,7 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-            `;
-
+                        <tbody>`;
             sortedFiles.forEach(file => {
                 const fileName = file.name;
                 const fileDate = extractDateFromFileName(fileName);
@@ -381,7 +320,6 @@
                 const sizeDisplay = formatFileSize(file.size);
                 const icon = getFileIcon(fileName);
                 const downloadUrl = file.download_url || '#';
-                
                 html += `
                     <tr>
                         <td>
@@ -394,39 +332,21 @@
                         <td>${typeDisplay}</td>
                         <td>${sizeDisplay}</td>
                         <td>
-                            <a href="${downloadUrl}" class="download-btn" download="${fileName}" target="_blank">
-                                ⬇️ 下载
-                            </a>
+                            <a href="${downloadUrl}" class="download-btn" download="${fileName}" target="_blank">⬇️ 下载</a>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
-
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
+            html += `</tbody></table></div>`;
             container.innerHTML = html;
         }
-
         function showError(message) {
             document.getElementById('fileListContainer').innerHTML = `
-                <div class="error-message">
-                    ❌ 加载失败：${message}
-                </div>
-                <div class="empty-state">
-                    请检查配置中的 owner、repo、以及当前选择的文件夹是否存在。
-                </div>
-            `;
+                <div class="error-message">❌ 加载失败：${message}</div>
+                <div class="empty-state">请检查配置中的 owner、repo、以及当前选择的文件夹是否存在。</div>`;
             document.getElementById('pathDisplay').textContent = currentPath;
         }
-
-        // 切换选项卡并重新加载
         async function loadPath(path) {
             currentPath = path;
-            // 显示加载中状态
             document.getElementById('fileListContainer').innerHTML = '<div class="loading">正在加载文件列表</div>';
             try {
                 const files = await fetchFiles(path);
@@ -435,26 +355,19 @@
                 showError(error.message);
             }
         }
-
-        // 初始化选项卡点击事件
         function setupTabs() {
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // 移除所有 active 样式
                     buttons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                    // 获取路径并加载
                     const path = this.getAttribute('data-path');
                     if (path) loadPath(path);
                 });
             });
         }
-
-        // 页面启动：加载默认选项卡
         (async function init() {
             setupTabs();
-            // 默认加载当前 active 按钮对应的路径（downloads）
             await loadPath(currentPath);
         })();
     </script>

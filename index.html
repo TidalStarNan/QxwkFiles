@@ -88,9 +88,87 @@
             opacity: 0.7;
         }
 
+        /* 向下滚动提示 */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+            animation: float 2s ease-in-out infinite;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            opacity: 0.85;
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(45deg);
+            opacity: 0.85;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(10px);
+            }
+        }
+
+        /* 公告区域样式（背景与宽度同下方功能区） */
+        .announcement-section {
+            background: #f8fafc;
+            padding: 30px 20px;
+        }
+
+        .announcement-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .announcement-item {
+            background: #ffffff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .announcement-date {
+            font-size: 0.85rem;
+            color: #64748b;
+            white-space: nowrap;
+            font-weight: 500;
+            min-width: 85px;
+        }
+
+        .announcement-content {
+            line-height: 1.5;
+        }
+
         /* 下方功能区 */
         .section {
-            padding: 60px 20px;
+            padding: 40px 20px;
             background: #f8fafc;
             min-height: 50vh;
         }
@@ -103,7 +181,7 @@
         .section h2 {
             font-size: 2rem;
             color: #1e293b;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             text-align: center;
         }
 
@@ -152,6 +230,111 @@
             color: #94a3b8;
             font-size: 14px;
         }
+
+        /* 下载选择弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 35px 30px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .modal-dialog h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .modal-dialog .modal-subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .modal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-option {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            text-decoration: none;
+            color: #1e293b;
+            display: block;
+        }
+
+        .modal-option:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
+        }
+
+        .modal-option-name {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+
+        .modal-option-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .modal-option-password {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .modal-close {
+            margin-top: 20px;
+            padding: 10px 28px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #475569;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #cbd5e1;
+        }
     </style>
 </head>
 <body>
@@ -166,48 +349,97 @@
                 <div class="saying-meta" id="sayingMeta"></div>
             </div>
         </div>
+
+        <!-- 向下滚动提示 -->
+        <div class="scroll-indicator" title="向下滚动查看更多">
+            <span>向下滚动</span>
+            <div class="scroll-arrow"></div>
+        </div>
     </div>
 
-    <!-- 下方可滚动功能区 -->
+    <!-- 单条公告区域 -->
+    <div class="announcement-section">
+        <div class="announcement-container">
+            <div class="announcement-item">
+                <span class="announcement-date">2026-04-28</span>
+                <span class="announcement-content">全新工作室官网正式上线，更多功能持续开发中。</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下方功能区（拆分为两个分类） -->
     <div class="section">
         <div class="container">
-            <h2>快速导航</h2>
+            <!-- 功能中心 -->
+            <h2>功能中心</h2>
             <div class="grid">
                 <a href="download.html" class="card">
                     <div class="card-icon">📥</div>
-                    <h3>下载中心</h3>
-                    <p>获取工作室资源与工具</p>
+                    <h3>站内下载</h3>
+                    <p>GitHub 下载，失败请尝试站外下载</p>
+                </a>
+                <a href="javascript:void(0)" class="card" onclick="openDownloadModal()">
+                    <div class="card-icon">☁️</div>
+                    <h3>站外下载</h3>
+                    <p>蓝奏云备用下载</p>
                 </a>
                 <a href="mc-status.html" class="card">
                     <div class="card-icon">🎮</div>
-                    <h3>MC 状态</h3>
-                    <p>查看 Minecraft 服务器状态</p>
+                    <h3>MC 状态监测</h3>
+                    <p>实时查看服务器状态</p>
                 </a>
+            </div>
+
+            <!-- 更多内容 -->
+            <h2>更多内容</h2>
+            <div class="grid">
                 <a href="about.html" class="card">
                     <div class="card-icon">ℹ️</div>
                     <h3>关于我们</h3>
-                    <p>了解更多工作室信息</p>
+                    <p>了解工作室的故事</p>
                 </a>
                 <a href="mailto:QxwkStudio@outlook.com" class="card">
                     <div class="card-icon">📬</div>
                     <h3>联系我们</h3>
-                    <p>发送邮件给我们</p>
-                </a>
-                <a href="error.html" class="card">
-                    <div class="card-icon">📅</div>
-                    <h3>活动公告</h3>
-                    <p>即将推出</p>
+                    <p>发送邮件与我们沟通</p>
                 </a>
                 <a href="error.html" class="card">
                     <div class="card-icon">🛠️</div>
                     <h3>更多功能</h3>
-                    <p>即将推出</p>
+                    <p>更多工具即将上线</p>
                 </a>
             </div>
         </div>
     </div>
     <div class="footer">
         &copy; 2026 青翔未阔工作室
+    </div>
+
+    <!-- 站外下载选择弹窗 -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal-dialog">
+            <h3>选择下载内容</h3>
+            <p class="modal-subtitle">请选择您需要下载的客户端</p>
+            <div class="modal-options">
+                <a href="https://meng-2943.lanzoum.com/b007tq8tzg" 
+                   target="_blank" 
+                   class="modal-option">
+                    <div class="modal-option-name">滦平一中服务器客户端</div>
+                    <div class="modal-option-info">
+                        提取码：<span class="modal-option-password">lpyz</span>
+                    </div>
+                </a>
+                <a href="https://meng-2943.lanzoum.com/b007u56tcb" 
+                   target="_blank" 
+                   class="modal-option">
+                    <div class="modal-option-name">2026生存服务器客户端</div>
+                    <div class="modal-option-info">
+                        提取码：<span class="modal-option-password">Vaca</span>
+                    </div>
+                </a>
+            </div>
+            <button class="modal-close" onclick="closeDownloadModal()">关闭</button>
+        </div>
     </div>
 
     <script>
@@ -232,6 +464,36 @@
         // 背景图片加载失败的降级处理
         document.getElementById('bgImage').addEventListener('error', function() {
             this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080"%3E%3Crect fill="%23222" width="1920" height="1080"/%3E%3Ctext fill="white" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E壁纸加载失败%3C/text%3E%3C/svg%3E';
+        });
+
+        // 点击滚动指示器，平滑滚动到下方功能区
+        document.querySelector('.scroll-indicator').addEventListener('click', function() {
+            document.querySelector('.section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // 站外下载弹窗控制
+        function openDownloadModal() {
+            document.getElementById('downloadModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 点击遮罩层关闭
+        document.getElementById('downloadModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDownloadModal();
+            }
+        });
+
+        // ESC 键关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDownloadModal();
+            }
         });
     </script>
 </body>
