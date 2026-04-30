@@ -7,6 +7,7 @@
 ### 🏠 首页 (`index.html`)
 - **全屏必应每日壁纸**：自动加载 1080P 必应每日一图，加载失败时自动降级为占位图
 - **随机「一言」**：每次访问随机展示一条励志语录（支持作者与出处显示）
+- **访问量统计**：页面底部的计数器在每次访问时加1，统计访问人次
 
 ### 📦 下载中心 (`download.html`)
 - **多目录标签页**：支持切换不同文件夹（如"一中整合包下载"、"未定文件夹"等）
@@ -34,6 +35,7 @@
 |---------|---------|------|
 | 必应每日壁纸 | `https://uapis.cn/api/v1/image/bing-daily?resolution=1080` | 首页全屏背景图 |
 | 一言语录 | `https://v1.hitokoto.cn/` | 首页随机语录 |
+| Hits Counter | `https://hitscounter.dev/` | 统计访问人次 |
 | MC 服务器状态 (主) | `https://api.mcsrvstat.us/3/{host}` | Java 版服务器查询 |
 | MC 服务器状态 (备) | `https://minecraft-serverhub.com/api/ping?host={host}&platform=java` | 失败时自动切换 |
 | UTC 时间同步 | `https://timeapi.io/api/Time/current/zone?timeZone=UTC` | error 页面实时时钟 |
@@ -44,5 +46,6 @@
 
 1. **Fork / 上传仓库**：将代码上传至你的 GitHub 仓库。
 2. **启用 GitHub Pages**：在仓库 **Settings → Pages** 中选择 `main` 分支作为源。
-3. **配置下载中心**：打开 `download.html`，修改 `CONFIG` 对象中的 `owner` 和 `repo` 为你自己的 GitHub 用户名与仓库名：
+3. **配置下载中心**：打开 `download.html`，修改 `CONFIG` 对象中的 `owner` 和 `repo` 为你自己的 GitHub 用户名与仓库名。
+3. **配置Hits Counter**：打开 `index.html`，修改 `visitor-counter` 对象中的链接为你自己的网站。
 4. **访问站点**：打开 https://你的用户名.github.io/仓库名 即可访问。

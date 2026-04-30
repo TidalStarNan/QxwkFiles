@@ -335,6 +335,21 @@
         .modal-close:hover {
             background: #cbd5e1;
         }
+
+        /* 访客计数器样式（置于版权上方） */
+        .visitor-counter {
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .visitor-counter img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -411,7 +426,14 @@
             </div>
         </div>
     </div>
+    
     <div class="footer">
+        <!-- 访客计数器位于版权信息上方 -->
+        <div class="visitor-counter">
+            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
+                 alt="访客计数器"
+                 onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
+        </div>
         &copy; 2026 青翔未阔工作室
     </div>
 
