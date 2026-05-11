@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一中辞典 - 密码验证</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #6bb3d9 0%, #6fc0b0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* 页面主标题（卡片外） */
+        .page-title {
+            color: white;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* 内容卡片 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            border-color: #0ea5e9;
+        }
+        button {
+            padding: 14px 30px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #10b981;
+        }
+        .error {
+            color: #ef4444;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* 引言 / 结语 共用样式 */
+        .intro-box, .outro-box {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 30px;
+            text-align: left;
+            color: #334155;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            border: 1px solid #e2e8f0;
+        }
+        .outro-box {
+            margin-top: 30px;
+            margin-bottom: 0;
+        }
+
+        /* 正文首行缩进两个字符 */
+        .intro-box p, .outro-box p, .entry-definition {
+            text-indent: 2em;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 16px;
+            font-style: italic;
+            color: #64748b;
+            text-indent: 0;
+        }
+
+        /* 词条卡片容器 */
+        .entries-container {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .entry-card {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.15s;
+        }
+        .entry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .entry-word {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        .entry-definition {
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        /* 页面底部计数器（卡片外） */
+        .visitor-counter {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .visitor-counter img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .locked {
+            display: block;
+        }
+        .content-area {
+            display: none;
+        }
+        .no-entries {
+            color: #64748b;
+            font-size: 1rem;
+            padding: 20px;
+        }
+        .card-hint {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面主标题（卡片外） -->
+    <h1 class="page-title">📖 一中辞典</h1>
+
+    <!-- 白色卡片：登录 / 内容区域 -->
+    <div class="card">
+        <!-- 密码输入区域 -->
+        <div id="loginArea" class="locked">
+            <p class="card-hint">请输入访问密码</p>
+            <input type="password" id="passwordInput" placeholder="输入密码">
+            <button onclick="checkPassword()">🔓 解锁</button>
+            <div id="errorMsg" class="error"></div>
+        </div>
+
+        <!-- 内容展示区域（解锁后可见） -->
+        <div id="contentArea" class="content-area">
+            <!-- 引言 -->
+            <div class="intro-box">
+                <p>本书在2026年5月11日截稿，是我们几位同学朝花夕拾的成果。</p>
+                <p>回首高中三年的路程，虽有坎坷，但不妨有欢乐，于是就有了这篇“编年体史书”。因为是弟子记录老师言行的书，所以也可以叫他《论语》。</p>
+                <p>本书由引言，前言，正文三部分组成。其中前言是对主要人物的介绍;正文部分严格按照编年体形式撰写，以高中三学年为节点区分，事件大致按照时间顺序排列，读者可通过词条后的解析，完成对词条的学习。正文部分的内容是我们几位同学边回忆边记录所写，其中可能有部分缺失与偏差，欢迎读者留言。</p>
+                <p>关于本书制作的初衷，想了想最初是因为好玩，想把高中的快乐记下来，后来觉得这也是对狭义上青春的感受。读完这本“百科全书”后，无论你身处何地，希望能给你带来欢乐，至于后续内容的填补，那就看有心者与后来人了。</p>
+                <div class="signature">—下水道晾衣杆</div>
+            </div>
+
+            <!-- 词条列表（由 JS 动态生成） -->
+            <div id="entriesContainer" class="entries-container">
+                <div class="no-entries">加载中...</div>
+            </div>
+
+            <!-- 结语 -->
+            <div class="outro-box">
+                <p>这本书是我突发奇想想出来的一个项目，从有想法到完成编写大概三天左右。最初是为了好玩，但是编写完成后感觉像是唤醒了尘封的记忆，又回顾了一遍高中的生活，也算是一举两得了。在此感谢向我提供各种回忆与资料的朋友们，也欢迎大家对本书进行指正与投稿。</p>
+                <div class="signature">——KKL</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 访客计数器（卡片外） -->
+    <div class="visitor-counter">
+        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC"
+             alt="访客计数器"
+             onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
+    </div>
+
+    <script>
+        let dictionaryData = null;
+
+        const loginArea = document.getElementById('loginArea');
+        const contentArea = document.getElementById('contentArea');
+        const errorMsg = document.getElementById('errorMsg');
+        const passwordInput = document.getElementById('passwordInput');
+        const entriesContainer = document.getElementById('entriesContainer');
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('dictionary.json');
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                dictionaryData = await response.json();
+            } catch (err) {
+                errorMsg.textContent = '⚠️ 词典配置加载失败，请联系管理员';
+            }
+        });
+
+        function checkPassword() {
+            const input = passwordInput.value.trim();
+            if (!dictionaryData) {
+                errorMsg.textContent = '⚠️ 词典配置尚未加载，请稍后再试';
+                return;
+            }
+
+            const passwordConfig = dictionaryData.password || dictionaryData.pwd;
+
+            let passwordCorrect = false;
+            if (typeof passwordConfig === 'string') {
+                passwordCorrect = (input === passwordConfig);
+            } else if (Array.isArray(passwordConfig)) {
+                passwordCorrect = passwordConfig.includes(input);
+            }
+
+            if (passwordCorrect) {
+                renderEntries(dictionaryData.entries || []);
+                loginArea.style.display = 'none';
+                contentArea.style.display = 'block';
+                errorMsg.textContent = '';
+            } else {
+                errorMsg.textContent = '❌ 密码错误，请重试';
+                passwordInput.value = '';
+            }
+        }
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        function renderEntries(entries) {
+            if (!Array.isArray(entries) || entries.length === 0) {
+                entriesContainer.innerHTML = '<div class="no-entries">📭 词典中暂无词条</div>';
+                return;
+            }
+
+            let html = '';
+            entries.forEach(entry => {
+                const word = escapeHtml(entry.word || '未知词语');
+                const definition = escapeHtml(entry.definition || '暂无释义');
+                html += `
+                    <div class="entry-card">
+                        <div class="entry-word">${word}</div>
+                        <div class="entry-definition">${definition}</div>
+                    </div>
+                `;
+            });
+            entriesContainer.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
