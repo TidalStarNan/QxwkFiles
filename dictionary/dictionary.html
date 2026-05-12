@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一中辞典 - 密码验证</title>
+    <title>一中辞典</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #6bb3d9 0%, #6fc0b0 100%);
@@ -19,96 +15,54 @@
             align-items: center;
             padding: 40px 20px;
         }
-
-        /* 页面主标题（卡片外） */
         .page-title {
             color: white;
             font-size: 2.2rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 30px;
             text-align: center;
         }
 
-        /* 内容卡片 */
-        .card {
+        .tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .tab-btn {
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.35); }
+        .tab-btn.active {
+            background: white;
+            color: #0ea5e9;
+            border-color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .entries-card {
             background: white;
             border-radius: 16px;
             padding: 40px 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             width: 100%;
             max-width: 1000px;
-            text-align: center;
+            min-height: 200px;
         }
-
-        input[type="password"] {
-            width: 100%;
-            padding: 14px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 40px;
-            font-size: 16px;
-            outline: none;
-            margin-bottom: 15px;
-            transition: border-color 0.2s;
-        }
-        input:focus {
-            border-color: #0ea5e9;
-        }
-        button {
-            padding: 14px 30px;
-            background: #0ea5e9;
-            color: white;
-            border: none;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        button:hover {
-            background: #10b981;
-        }
-        .error {
-            color: #ef4444;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        /* 引言 / 结语 共用样式 */
-        .intro-box, .outro-box {
-            background: #f1f5f9;
-            border-radius: 12px;
-            padding: 24px 28px;
-            margin-bottom: 30px;
-            text-align: left;
-            color: #334155;
-            line-height: 1.8;
-            font-size: 0.95rem;
-            border: 1px solid #e2e8f0;
-        }
-        .outro-box {
-            margin-top: 30px;
-            margin-bottom: 0;
-        }
-
-        /* 正文首行缩进两个字符 */
-        .intro-box p, .outro-box p, .entry-definition {
-            text-indent: 2em;
-        }
-
-        .signature {
-            text-align: right;
-            margin-top: 16px;
-            font-style: italic;
-            color: #64748b;
-            text-indent: 0;
-        }
-
-        /* 词条卡片容器 */
-        .entries-container {
-            margin-top: 30px;
-            text-align: left;
-        }
+        .entries-container { text-align: left; }
         .entry-card {
             background: #f8fafc;
             border-left: 4px solid #3b82f6;
@@ -129,154 +83,259 @@
         }
         .entry-definition {
             color: #334155;
-            line-height: 1.5;
+            line-height: 1.6;
+        }
+        .entry-definition p {
+            text-indent: 2em;
+            margin: 0;
         }
 
-        /* 页面底部计数器（卡片外） */
-        .visitor-counter {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .visitor-counter img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .locked {
-            display: block;
-        }
-        .content-area {
-            display: none;
-        }
         .no-entries {
             color: #64748b;
             font-size: 1rem;
             padding: 20px;
+            text-align: center;
         }
-        .card-hint {
+
+        .password-prompt {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .password-prompt h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .password-prompt p {
             color: #64748b;
             margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .password-prompt input {
+            width: 100%;
+            max-width: 320px;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+        .password-prompt input:focus { border-color: #0ea5e9; }
+        .password-prompt button {
+            padding: 10px 30px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .password-prompt button:hover { background: #10b981; }
+        .error-msg {
+            color: #ef4444;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .visitor-counter {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        .visitor-counter img {
+            max-width: 100%;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <!-- 页面主标题（卡片外） -->
     <h1 class="page-title">📖 一中辞典</h1>
 
-    <!-- 白色卡片：登录 / 内容区域 -->
-    <div class="card">
-        <!-- 密码输入区域 -->
-        <div id="loginArea" class="locked">
-            <p class="card-hint">请输入访问密码</p>
-            <input type="password" id="passwordInput" placeholder="输入密码">
-            <button onclick="checkPassword()">🔓 解锁</button>
-            <div id="errorMsg" class="error"></div>
-        </div>
+    <div class="tabs">
+        <button class="tab-btn active" data-category="foreword">前言·后记</button>
+        <button class="tab-btn" data-category="class_3">三班</button>
+        <button class="tab-btn" data-category="class_1">一班</button>
+        <button class="tab-btn" data-category="person">人物志</button>
+    </div>
 
-        <!-- 内容展示区域（解锁后可见） -->
-        <div id="contentArea" class="content-area">
-            <!-- 引言 -->
-            <div class="intro-box">
-                <p>本书在2026年5月11日截稿，是我们几位同学朝花夕拾的成果。</p>
-                <p>回首高中三年的路程，虽有坎坷，但不妨有欢乐，于是就有了这篇“编年体史书”。因为是弟子记录老师言行的书，所以也可以叫他《论语》。</p>
-                <p>本书由引言，前言，正文三部分组成。其中前言是对主要人物的介绍;正文部分严格按照编年体形式撰写，以高中三学年为节点区分，事件大致按照时间顺序排列，读者可通过词条后的解析，完成对词条的学习。正文部分的内容是我们几位同学边回忆边记录所写，其中可能有部分缺失与偏差，欢迎读者留言。</p>
-                <p>关于本书制作的初衷，想了想最初是因为好玩，想把高中的快乐记下来，后来觉得这也是对狭义上青春的感受。读完这本“百科全书”后，无论你身处何地，希望能给你带来欢乐，至于后续内容的填补，那就看有心者与后来人了。</p>
-                <div class="signature">—下水道晾衣杆</div>
-            </div>
-
-            <!-- 词条列表（由 JS 动态生成） -->
-            <div id="entriesContainer" class="entries-container">
-                <div class="no-entries">加载中...</div>
-            </div>
-
-            <!-- 结语 -->
-            <div class="outro-box">
-                <p>这本书是我突发奇想想出来的一个项目，从有想法到完成编写大概三天左右。最初是为了好玩，但是编写完成后感觉像是唤醒了尘封的记忆，又回顾了一遍高中的生活，也算是一举两得了。在此感谢向我提供各种回忆与资料的朋友们，也欢迎大家对本书进行指正与投稿。</p>
-                <div class="signature">——KKL</div>
-            </div>
+    <div class="entries-card">
+        <div id="entriesContainer" class="entries-container">
+            <div class="no-entries">加载中...</div>
         </div>
     </div>
 
-    <!-- 访客计数器（卡片外） -->
     <div class="visitor-counter">
-        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC"
-             alt="访客计数器"
-             onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
+        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
+             alt="访客计数器" onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
     </div>
 
     <script>
-        let dictionaryData = null;
+        const dictionaries = {
+            class_1: [],
+            class_3: [],
+            person: []
+        };
 
-        const loginArea = document.getElementById('loginArea');
-        const contentArea = document.getElementById('contentArea');
-        const errorMsg = document.getElementById('errorMsg');
-        const passwordInput = document.getElementById('passwordInput');
+        const forewordEntries = [
+            {
+                word: "引言",
+                definition: "本书在2026年5月11日截稿，是我们几位同学朝花夕拾的成果。" +
+                    "回首高中三年的路程，虽有坎坷，但不妨有欢乐，于是就有了这篇“编年体史书”。" +
+                    "因为是弟子记录老师言行的书，所以也可以叫他《论语》。" +
+                    "本书由引言，前言，正文三部分组成。其中前言是对主要人物的介绍;" +
+                    "正文部分严格按照编年体形式撰写，以高中三学年为节点区分，事件大致按照时间顺序排列，" +
+                    "读者可通过词条后的解析，完成对词条的学习。正文部分的内容是我们几位同学边回忆边记录所写，" +
+                    "其中可能有部分缺失与偏差，欢迎读者留言。" +
+                    "关于本书制作的初衷，想了想最初是因为好玩，想把高中的快乐记下来，" +
+                    "后来觉得这也是对狭义上青春的感受。读完这本“百科全书”后，无论你身处何地，" +
+                    "希望能给你带来欢乐，至于后续内容的填补，那就看有心者与后来人了。" +
+                    "——下水道晾衣杆"
+            },
+            {
+                word: "后记",
+                definition: "这本书是我突发奇想想出来的一个项目，从有想法到完成编写大概三天左右。" +
+                    "最初是为了好玩，但是编写完成后感觉像是唤醒了尘封的记忆，又回顾了一遍高中的生活，" +
+                    "也算是一举两得了。在此感谢向我提供各种回忆与资料的朋友们，也欢迎大家对本书进行指正与投稿。" +
+                    "——KKL"
+            }
+        ];
+
+        const unlockedCategories = {
+            foreword: true,
+            class_3: false,
+            class_1: false,
+            person: false
+        };
+
         const entriesContainer = document.getElementById('entriesContainer');
 
-        window.addEventListener('DOMContentLoaded', async () => {
+        async function loadData() {
             try {
-                const response = await fetch('dictionary.json');
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                dictionaryData = await response.json();
+                const [c1Resp, c3Resp, perResp] = await Promise.all([
+                    fetch('class_1.json'),
+                    fetch('class_3.json'),
+                    fetch('person.json')
+                ]);
+                const c1Data = await c1Resp.json();
+                const c3Data = await c3Resp.json();
+                const perData = await perResp.json();
+                dictionaries.class_1 = c1Data.entries || [];
+                dictionaries.class_3 = c3Data.entries || [];
+                dictionaries.person = perData.entries || [];
+                switchTab('foreword');
             } catch (err) {
-                errorMsg.textContent = '⚠️ 词典配置加载失败，请联系管理员';
-            }
-        });
-
-        function checkPassword() {
-            const input = passwordInput.value.trim();
-            if (!dictionaryData) {
-                errorMsg.textContent = '⚠️ 词典配置尚未加载，请稍后再试';
-                return;
-            }
-
-            const passwordConfig = dictionaryData.password || dictionaryData.pwd;
-
-            let passwordCorrect = false;
-            if (typeof passwordConfig === 'string') {
-                passwordCorrect = (input === passwordConfig);
-            } else if (Array.isArray(passwordConfig)) {
-                passwordCorrect = passwordConfig.includes(input);
-            }
-
-            if (passwordCorrect) {
-                renderEntries(dictionaryData.entries || []);
-                loginArea.style.display = 'none';
-                contentArea.style.display = 'block';
-                errorMsg.textContent = '';
-            } else {
-                errorMsg.textContent = '❌ 密码错误，请重试';
-                passwordInput.value = '';
+                entriesContainer.innerHTML = '<div class="no-entries">⚠️ 数据加载失败，请刷新重试</div>';
             }
         }
 
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkPassword();
+        window.addEventListener('DOMContentLoaded', loadData);
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.dataset.category;
+                switchTab(category);
+                tabButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
 
-        function renderEntries(entries) {
+        function switchTab(category) {
+            if (category === 'foreword' || unlockedCategories[category]) {
+                renderEntries(category);
+            } else {
+                renderTitlePrompt(category);
+            }
+        }
+
+        function renderEntries(category) {
+            let entries = [];
+            if (category === 'foreword') {
+                entries = forewordEntries;
+            } else {
+                entries = dictionaries[category] || [];
+            }
             if (!Array.isArray(entries) || entries.length === 0) {
-                entriesContainer.innerHTML = '<div class="no-entries">📭 词典中暂无词条</div>';
+                entriesContainer.innerHTML = '<div class="no-entries">📭 该分类暂无词条</div>';
                 return;
             }
-
             let html = '';
             entries.forEach(entry => {
                 const word = escapeHtml(entry.word || '未知词语');
-                const definition = escapeHtml(entry.definition || '暂无释义');
+                let definitionHtml = '';
+                if (entry.definition && entry.definition.trim() !== '') {
+                    // 按 \n 分割成段落，每段包裹 <p> 标签，自动应用 text-indent
+                    definitionHtml = entry.definition
+                        .split('\n')
+                        .map(line => `<p>${escapeHtml(line)}</p>`)
+                        .join('');
+                } else {
+                    definitionHtml = '<p>暂无释义</p>';
+                }
                 html += `
                     <div class="entry-card">
                         <div class="entry-word">${word}</div>
-                        <div class="entry-definition">${definition}</div>
+                        <div class="entry-definition">${definitionHtml}</div>
                     </div>
                 `;
             });
             entriesContainer.innerHTML = html;
+        }
+
+        function renderTitlePrompt(category) {
+            const categoryNames = {
+                class_3: '三班',
+                class_1: '一班',
+                person: '人物志'
+            };
+            const entries = dictionaries[category] || [];
+            if (entries.length === 0) {
+                entriesContainer.innerHTML = 
+                    '<div class="no-entries">⚠️ 该分类暂无词条，无法通过标题解锁。<br>请先添加词条后再试。</div>';
+                return;
+            }
+            entriesContainer.innerHTML = `
+                <div class="password-prompt">
+                    <h3>🔑 解锁「${categoryNames[category]}」</h3>
+                    <p>请输入该分类中的<strong>任意一个梗的标题</strong></p>
+                    <input type="text" id="titleInput" placeholder="输入词条名称" autocomplete="off">
+                    <button id="titleBtn">验证</button>
+                    <div id="titleError" class="error-msg"></div>
+                </div>
+            `;
+
+            const input = document.getElementById('titleInput');
+            const btn = document.getElementById('titleBtn');
+            const error = document.getElementById('titleError');
+
+            const tryUnlock = () => {
+                const rawInput = input.value.trim();
+                if (!rawInput) {
+                    error.textContent = '请输入一个词条标题';
+                    return;
+                }
+                const matched = entries.some(entry => {
+                    const entryWord = (entry.word || '').trim();
+                    return entryWord.toLowerCase() === rawInput.toLowerCase();
+                });
+                if (matched) {
+                    unlockedCategories[category] = true;
+                    renderEntries(category);
+                } else {
+                    error.textContent = '❌ 标题不正确，请再试一次';
+                    input.value = '';
+                }
+            };
+
+            btn.addEventListener('click', tryUnlock);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') tryUnlock();
+            });
         }
 
         function escapeHtml(text) {
