@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一中辞典</title>
+    <title>一中大辞典</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #6bb3d9 0%, #6fc0b0 100%);
@@ -18,7 +22,7 @@
         .page-title {
             color: white;
             font-size: 2.2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             margin-bottom: 30px;
             text-align: center;
         }
@@ -44,25 +48,29 @@
             transition: all 0.3s;
             font-weight: 500;
         }
-        .tab-btn:hover { background: rgba(255, 255, 255, 0.35); }
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
         .tab-btn.active {
             background: white;
             color: #0ea5e9;
             border-color: white;
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .entries-card {
             background: white;
             border-radius: 16px;
             padding: 40px 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 1000px;
             min-height: 200px;
         }
-        .entries-container { text-align: left; }
+        .entries-container {
+            text-align: left;
+        }
         .entry-card {
             background: #f8fafc;
             border-left: 4px solid #3b82f6;
@@ -73,7 +81,20 @@
         }
         .entry-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .entry-card.warning {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        .entry-card.warning:hover {
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.18);
+        }
+        .entry-card.warning .entry-word {
+            color: #b91c1c;
+        }
+        .entry-card.warning .entry-definition {
+            color: #7f1d1d;
         }
         .entry-word {
             font-size: 1.2rem;
@@ -89,12 +110,30 @@
             text-indent: 2em;
             margin: 0;
         }
-
         .no-entries {
             color: #64748b;
             font-size: 1rem;
             padding: 20px;
             text-align: center;
+        }
+        .error-msg {
+            color: #ef4444;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .retry-btn {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .retry-btn:hover {
+            background: #0284c7;
         }
 
         .password-prompt {
@@ -122,7 +161,9 @@
             margin-bottom: 15px;
             transition: border-color 0.2s;
         }
-        .password-prompt input:focus { border-color: #0ea5e9; }
+        .password-prompt input:focus {
+            border-color: #0ea5e9;
+        }
         .password-prompt button {
             padding: 10px 30px;
             background: #0ea5e9;
@@ -134,11 +175,8 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .password-prompt button:hover { background: #10b981; }
-        .error-msg {
-            color: #ef4444;
-            margin-top: 10px;
-            font-size: 14px;
+        .password-prompt button:hover {
+            background: #10b981;
         }
 
         .visitor-counter {
@@ -149,17 +187,18 @@
         .visitor-counter img {
             max-width: 100%;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <h1 class="page-title">📖 一中辞典</h1>
+    <h1 class="page-title">📖 一中大辞典</h1>
 
     <div class="tabs">
-        <button class="tab-btn active" data-category="foreword">前言·后记</button>
-        <button class="tab-btn" data-category="class_3">三班</button>
-        <button class="tab-btn" data-category="class_1">一班</button>
+        <button class="tab-btn active" data-category="foreword">前言后记</button>
+        <button class="tab-btn" data-category="class_all">全校卷</button>
+        <button class="tab-btn" data-category="class_1">一班卷</button>
+        <button class="tab-btn" data-category="class_3">三班卷</button>
         <button class="tab-btn" data-category="person">人物志</button>
     </div>
 
@@ -170,106 +209,151 @@
     </div>
 
     <div class="visitor-counter">
-        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
-             alt="访客计数器" onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
+        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC"
+            alt="访客计数器" onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
     </div>
 
     <script>
+        // 数据存储
         const dictionaries = {
             class_1: [],
             class_3: [],
+            class_all: [],
             person: []
         };
-
-        const forewordEntries = [
-            {
-                word: "引言",
-                definition: "本书在2026年5月11日截稿，是我们几位同学朝花夕拾的成果。" +
-                    "回首高中三年的路程，虽有坎坷，但不妨有欢乐，于是就有了这篇“编年体史书”。" +
-                    "因为是弟子记录老师言行的书，所以也可以叫他《论语》。" +
-                    "本书由引言，前言，正文三部分组成。其中前言是对主要人物的介绍;" +
-                    "正文部分严格按照编年体形式撰写，以高中三学年为节点区分，事件大致按照时间顺序排列，" +
-                    "读者可通过词条后的解析，完成对词条的学习。正文部分的内容是我们几位同学边回忆边记录所写，" +
-                    "其中可能有部分缺失与偏差，欢迎读者留言。" +
-                    "关于本书制作的初衷，想了想最初是因为好玩，想把高中的快乐记下来，" +
-                    "后来觉得这也是对狭义上青春的感受。读完这本“百科全书”后，无论你身处何地，" +
-                    "希望能给你带来欢乐，至于后续内容的填补，那就看有心者与后来人了。" +
-                    "——下水道晾衣杆"
-            },
-            {
-                word: "后记",
-                definition: "这本书是我突发奇想想出来的一个项目，从有想法到完成编写大概三天左右。" +
-                    "最初是为了好玩，但是编写完成后感觉像是唤醒了尘封的记忆，又回顾了一遍高中的生活，" +
-                    "也算是一举两得了。在此感谢向我提供各种回忆与资料的朋友们，也欢迎大家对本书进行指正与投稿。" +
-                    "——KKL"
-            }
-        ];
-
+        // 加载错误标记
+        const loadErrors = {
+            class_1: false,
+            class_3: false,
+            class_all: false,
+            person: false
+        };
+        // 解锁状态（全校卷无需解锁，直接设为true）
         const unlockedCategories = {
             foreword: true,
             class_3: false,
             class_1: false,
+            class_all: true,
             person: false
         };
+        // 前言语录
+        const forewordEntries = [{
+            word: "网站公告",
+            definition: '网站更新日期：2026年5月15日\n欢迎投稿每个班的梗、人物以及好玩的东西\n什么？你说你不是本校学生？那你还是走吧……又看不懂',
+            warning: true
+        }, {
+            word: "三班前言",
+            definition: '本书在2026年5月11日截稿，是我们几位同学朝花夕拾的成果。回首高中三年的路程，虽有坎坷，但不妨有欢乐，于是就有了这篇“编年体史书”。因为是弟子记录老师言行的书，所以也可以叫他《论语》。本书由引言，前言，正文三部分组成。其中前言是对主要人物的介绍;正文部分严格按照编年体形式撰写，以高中三学年为节点区分，事件大致按照时间顺序排列，读者可通过词条后的解析，完成对词条的学习。正文部分的内容是我们几位同学边回忆边记录所写，其中可能有部分缺失与偏差，欢迎读者留言。关于本书制作的初衷，想了想最初是因为好玩，想把高中的快乐记下来，后来觉得这也是对狭义上青春的感受。读完这本“百科全书”后，无论你身处何地，希望能给你带来欢乐，至于后续内容的填补，那就看有心者与后来人了。\n——下水道晾衣杆'
+        }, {
+            word: "三班后记",
+            definition: '这本书是我突发奇想想出来的一个项目，从有想法到完成编写大概三天左右。最初是为了好玩，但是编写完成后感觉像是唤醒了尘封的记忆，又回顾了一遍高中的生活，也算是一举两得了。在此感谢向我提供各种回忆与资料的朋友们，也欢迎大家对本书进行指正与投稿。\n——KKL'
+        }];
+
+        let dataLoadCompleted = false;  // 标记是否已完成所有初始加载
 
         const entriesContainer = document.getElementById('entriesContainer');
 
-        async function loadData() {
+        // 单独加载某个分类的JSON
+        async function loadCategory(category, jsonFile) {
             try {
-                const [c1Resp, c3Resp, perResp] = await Promise.all([
-                    fetch('class_1.json'),
-                    fetch('class_3.json'),
-                    fetch('person.json')
-                ]);
-                const c1Data = await c1Resp.json();
-                const c3Data = await c3Resp.json();
-                const perData = await perResp.json();
-                dictionaries.class_1 = c1Data.entries || [];
-                dictionaries.class_3 = c3Data.entries || [];
-                dictionaries.person = perData.entries || [];
-                switchTab('foreword');
+                const resp = await fetch(jsonFile);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                dictionaries[category] = data.entries || [];
+                loadErrors[category] = false;
+                console.log(`成功加载 ${category}`);
             } catch (err) {
-                entriesContainer.innerHTML = '<div class="no-entries">⚠️ 数据加载失败，请刷新重试</div>';
+                console.error(`加载 ${category} 失败:`, err);
+                dictionaries[category] = [];
+                loadErrors[category] = true;
             }
         }
 
-        window.addEventListener('DOMContentLoaded', loadData);
+        // 加载所有数据 (独立请求，部分失败不影响整体)
+        async function loadAllData() {
+            // 并行加载四个JSON：一班、三班、全校卷、人物志
+            await Promise.allSettled([
+                loadCategory('class_1', 'class_1.json'),
+                loadCategory('class_3', 'class_3.json'),
+                loadCategory('class_all', 'class_all.json'),
+                loadCategory('person', 'person.json')
+            ]);
+            dataLoadCompleted = true;
+            // 加载完成后刷新当前显示的选项卡（修复问题1）
+            refreshCurrentTab();
+        }
 
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        tabButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const category = this.dataset.category;
-                switchTab(category);
-                tabButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+        // 获取当前激活的选项卡分类
+        function getActiveCategory() {
+            const activeBtn = document.querySelector('.tab-btn.active');
+            return activeBtn ? activeBtn.dataset.category : 'foreword';
+        }
 
-        function switchTab(category) {
-            if (category === 'foreword' || unlockedCategories[category]) {
-                renderEntries(category);
-            } else {
-                renderTitlePrompt(category);
+        // 根据当前活动选项卡刷新内容
+        function refreshCurrentTab() {
+            const category = getActiveCategory();
+            switchTab(category);
+        }
+
+        // 重试加载特定分类
+        async function retryLoadCategory(category) {
+            if (category === 'foreword') return;
+            let jsonFile = '';
+            if (category === 'class_1') jsonFile = 'class_1.json';
+            else if (category === 'class_3') jsonFile = 'class_3.json';
+            else if (category === 'class_all') jsonFile = 'class_all.json';
+            else if (category === 'person') jsonFile = 'person.json';
+            else return;
+
+            // 显示加载中提示
+            entriesContainer.innerHTML = '<div class="no-entries">⏳ 重新加载中...</div>';
+            await loadCategory(category, jsonFile);
+            // 重试后如果当前仍然显示的是这个分类，则刷新界面
+            if (getActiveCategory() === category) {
+                // 若分类原本未解锁，重试后仍保持未解锁，重新渲染解锁界面或词条列表
+                if (unlockedCategories[category]) {
+                    renderEntries(category);
+                } else {
+                    renderTitlePrompt(category);
+                }
             }
         }
 
+        // 渲染词条列表（适用于已解锁或前言）
         function renderEntries(category) {
             let entries = [];
+            let hasError = false;
             if (category === 'foreword') {
                 entries = forewordEntries;
             } else {
                 entries = dictionaries[category] || [];
+                hasError = loadErrors[category];
             }
+
+            if (hasError) {
+                entriesContainer.innerHTML = `
+                    <div class="no-entries">
+                        ⚠️ 该分类数据加载失败，请检查网络或稍后重试。<br>
+                        <button class="retry-btn" id="retryThisCategory">🔄 重新加载</button>
+                    </div>
+                `;
+                const retryBtn = document.getElementById('retryThisCategory');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => retryLoadCategory(category));
+                }
+                return;
+            }
+
             if (!Array.isArray(entries) || entries.length === 0) {
                 entriesContainer.innerHTML = '<div class="no-entries">📭 该分类暂无词条</div>';
                 return;
             }
+
             let html = '';
             entries.forEach(entry => {
                 const word = escapeHtml(entry.word || '未知词语');
                 let definitionHtml = '';
                 if (entry.definition && entry.definition.trim() !== '') {
-                    // 按 \n 分割成段落，每段包裹 <p> 标签，自动应用 text-indent
                     definitionHtml = entry.definition
                         .split('\n')
                         .map(line => `<p>${escapeHtml(line)}</p>`)
@@ -277,8 +361,9 @@
                 } else {
                     definitionHtml = '<p>暂无释义</p>';
                 }
+                const extraClass = entry.warning ? ' warning' : '';
                 html += `
-                    <div class="entry-card">
+                    <div class="entry-card${extraClass}">
                         <div class="entry-word">${word}</div>
                         <div class="entry-definition">${definitionHtml}</div>
                     </div>
@@ -287,18 +372,37 @@
             entriesContainer.innerHTML = html;
         }
 
+        // 渲染密码解锁界面 (附带加载失败重试支持)
         function renderTitlePrompt(category) {
             const categoryNames = {
-                class_3: '三班',
-                class_1: '一班',
+                class_3: '三班卷',
+                class_1: '一班卷',
                 person: '人物志'
             };
             const entries = dictionaries[category] || [];
-            if (entries.length === 0) {
-                entriesContainer.innerHTML = 
-                    '<div class="no-entries">⚠️ 该分类暂无词条，无法通过标题解锁。<br>请先添加词条后再试。</div>';
+            const hasError = loadErrors[category];
+
+            // 如果加载失败，显示错误并提供重试
+            if (hasError) {
+                entriesContainer.innerHTML = `
+                    <div class="no-entries">
+                        ⚠️ 该分类数据加载失败，无法验证标题解锁。<br>
+                        请检查网络后 <button class="retry-btn" id="retryFromError">🔄 重新加载</button>
+                    </div>
+                `;
+                const retryBtn = document.getElementById('retryFromError');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => retryLoadCategory(category));
+                }
                 return;
             }
+
+            if (entries.length === 0) {
+                entriesContainer.innerHTML = '<div class="no-entries">📭 该分类暂无词条，无法通过标题解锁。<br>请等待管理员添加内容。</div>';
+                return;
+            }
+
+            // 正常解锁界面
             entriesContainer.innerHTML = `
                 <div class="password-prompt">
                     <h3>🔑 解锁「${categoryNames[category]}」</h3>
@@ -338,6 +442,34 @@
             });
         }
 
+        // 切换选项卡主逻辑
+        function switchTab(category) {
+            if (category === 'foreword' || unlockedCategories[category]) {
+                renderEntries(category);
+            } else {
+                // 未解锁，且数据可能尚未加载完成（但数据结构已存在）
+                renderTitlePrompt(category);
+            }
+        }
+
+        // 事件监听与初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    // 切换激活样式
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // 显示对应内容
+                    switchTab(category);
+                });
+            });
+        });
+
+        // XSS防护
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
