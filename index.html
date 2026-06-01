@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>青翔未阔工作室</title>
+    <meta name="description" content="这里是青翔未阔工作室官方网站~ 欢迎访问全新的域名">
+    <link rel="icon" type="image/webp" href="/favicon.webp">
     <style>
         * {
             margin: 0;
@@ -11,9 +13,159 @@
             box-sizing: border-box;
         }
 
+        /* 全局滚动平滑 + 固定顶栏偏移预留 (确保锚点滚动不被顶栏遮挡) */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 75px;   /* 固定顶栏高度偏移量，兼容现代浏览器 */
+        }
+
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             background: #111;
+        }
+
+        /* 为锚点区域增加额外的滚动边距，确保兼容性 */
+        #functions-section,
+        #more-section {
+            scroll-margin-top: 75px;
+        }
+
+        /* ========= 固定顶栏 (毛玻璃悬浮效果) ========= */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 20, 30, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 顶栏内部容器：强制横排 + 窄屏可滚动，绝不换行 */
+        .navbar-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 28px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;          /* 强制不换行 */
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            min-height: 68px;
+            overflow-x: auto;           /* 宽度不足时允许水平滚动 */
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;      /* 火狐细滚动条 */
+        }
+        /* 隐藏滚动条但保持功能 (可选，保持美观) */
+        .navbar-container::-webkit-scrollbar {
+            height: 3px;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .navbar-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.4);
+            border-radius: 3px;
+        }
+
+        /* 左侧品牌：不允许压缩，保证完整显示 */
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.35rem;
+            letter-spacing: 1.5px;
+            transition: opacity 0.2s;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;             /* 关键：防止被压缩 */
+        }
+        .navbar-brand:hover {
+            opacity: 0.85;
+        }
+        .brand-icon {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .brand-text {
+            background: linear-gradient(135deg, #FFFFFF, #e6f0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* 右侧导航菜单 — 只包含「功能中心」和「更多内容」，强制一行 */
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            list-style: none;
+            flex-shrink: 0;             /* 关键：防止压缩，保证菜单项完整横排 */
+        }
+        .navbar-menu li {
+            list-style: none;
+            flex-shrink: 0;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 20px;
+            color: rgba(255, 255, 255, 0.92);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: all 0.25s ease;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            white-space: nowrap;        /* 按钮文字不换行 */
+        }
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.65);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+        }
+        .nav-link:active {
+            transform: translateY(1px);
+        }
+
+        /* 移动端适配：只调整内边距和间距，绝不换行，横排滚动保留 */
+        @media (max-width: 680px) {
+            .navbar-container {
+                padding: 0 16px;
+                gap: 16px;
+                min-height: 60px;
+            }
+            .navbar-brand {
+                font-size: 1.2rem;
+                gap: 6px;
+            }
+            .brand-icon {
+                font-size: 1.4rem;
+            }
+            .nav-link {
+                padding: 6px 16px;
+                font-size: 0.9rem;
+            }
+            /* 确保滚动偏移依然适配小屏幕顶栏高度 */
+            html {
+                scroll-padding-top: 70px;
+            }
+            #functions-section,
+            #more-section {
+                scroll-margin-top: 70px;
+            }
         }
 
         /* 全屏背景图片区域 */
@@ -42,12 +194,24 @@
             text-align: center;
             color: white;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             padding: 30px 50px;
             border-radius: 12px;
             backdrop-filter: blur(5px);
             max-width: 700px;
             width: 90%;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 680px) {
+            .hero-overlay {
+                padding: 20px 24px;
+                width: 92%;
+                margin-top: 30px;
+            }
+            .hero-overlay h1 {
+                font-size: 2.4rem;
+            }
         }
 
         .hero-overlay h1 {
@@ -130,7 +294,7 @@
             }
         }
 
-        /* 公告区域样式（背景与宽度同下方功能区） */
+        /* 公告区域样式 */
         .announcement-section {
             background: #f8fafc;
             padding: 30px 20px;
@@ -166,7 +330,7 @@
             line-height: 1.5;
         }
 
-        /* 下方功能区 */
+        /* 下方功能区 (整体背景) */
         .section {
             padding: 40px 20px;
             background: #f8fafc;
@@ -231,7 +395,7 @@
             font-size: 14px;
         }
 
-        /* 下载选择弹窗 */
+        /* 下载选择弹窗 & 域名导航弹窗 & 友情链接弹窗 (共用基础样式) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -239,10 +403,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1100;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(3px);
         }
 
         .modal-overlay.active {
@@ -251,12 +416,25 @@
 
         .modal-dialog {
             background: white;
-            border-radius: 16px;
+            border-radius: 24px;
             padding: 35px 30px;
-            max-width: 480px;
+            max-width: min(90vw, 560px);
             width: 90%;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             text-align: center;
+            transition: max-width 0.2s ease;
+        }
+
+        /* 电脑端适当放宽对话框，避免长网址换行 */
+        @media (min-width: 640px) {
+            .modal-dialog {
+                max-width: min(85vw, 680px);
+            }
+        }
+        @media (min-width: 1024px) {
+            .modal-dialog {
+                max-width: min(75vw, 800px);
+            }
         }
 
         .modal-dialog h3 {
@@ -297,10 +475,27 @@
             box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
         }
 
+        /* 选项标题区域：默认使用弹性布局 + 水平滚动防止换行（电脑端和手机端均优先不换行） */
         .modal-option-name {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: baseline;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: thin;
             font-weight: 600;
             font-size: 1.05rem;
             margin-bottom: 6px;
+            padding-bottom: 2px;
+        }
+        .modal-option-name::-webkit-scrollbar {
+            height: 3px;
+            background-color: #e2e8f0;
+        }
+        .modal-option-name::-webkit-scrollbar-thumb {
+            background-color: #94a3b8;
+            border-radius: 3px;
         }
 
         .modal-option-info {
@@ -308,24 +503,32 @@
             color: #64748b;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
+        /* 提取码样式：背景框 + 暖色系 */
         .modal-option-password {
             background: #fef3c7;
             color: #92400e;
             padding: 2px 8px;
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 0 0 1px rgba(255,215,130,0.6);
+            flex-shrink: 0;
         }
 
         .modal-close {
-            margin-top: 20px;
+            margin-top: 24px;
             padding: 10px 28px;
             background: #e2e8f0;
             border: none;
-            border-radius: 8px;
+            border-radius: 40px;
             cursor: pointer;
             font-size: 0.95rem;
             color: #475569;
@@ -336,7 +539,7 @@
             background: #cbd5e1;
         }
 
-        /* 访客计数器样式（置于版权上方） */
+        /* 访客计数器样式 */
         .visitor-counter {
             margin-top: 0;
             margin-bottom: 12px;
@@ -350,9 +553,49 @@
             height: auto;
             border-radius: 6px;
         }
+        
+        /* 手机端弹性布局：仅当实在放不下时，允许信息区换行；但标题区强制不换行+滚动，避免提取码框意外折行 */
+        @media (max-width: 550px) {
+            .modal-dialog {
+                padding: 28px 20px;
+                max-width: 92vw;
+            }
+            /* 标题区保持不换行+水平滚动，确保提取码框始终在一行内，除非屏幕极窄则滚动可见 */
+            .modal-option-name {
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            /* 信息区允许换行，但保持水平灵活 */
+            .modal-option-info {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            /* 确保提取码框本身不换行 */
+            .modal-option-password {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- ========= 毛玻璃顶栏：横排永不换行，窄屏可滑动 ========= -->
+    <header class="top-navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand" id="homeTopLink">
+                <span class="brand-icon">▱</span>
+                <span class="brand-text">青翔未阔工作室</span>
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="#functions-section" class="nav-link">功能中心</a></li>
+                <li><a href="#more-section" class="nav-link">更多内容</a></li>
+            </ul>
+        </div>
+    </header>
+
     <!-- 全屏背景图 -->
     <div class="hero">
         <img src="https://uapis.cn/api/v1/image/bing-daily?resolution=1080" alt="必应每日壁纸" id="bgImage">
@@ -376,48 +619,75 @@
     <div class="announcement-section">
         <div class="announcement-container">
             <div class="announcement-item">
-                <span class="announcement-date">2026-04-28</span>
-                <span class="announcement-content">全新工作室官网正式上线，更多功能持续开发中。</span>
+                <span class="announcement-date">2026-06-01</span>
+                <span class="announcement-content">欢迎访问全新的 qxwkstudio.top 域名，旧域名已弃用，请及时更换书签</span>
             </div>
         </div>
     </div>
 
-    <!-- 下方功能区（拆分为两个分类） -->
-    <div class="section">
+    <!-- 功能中心板块 (原有5个卡片 + 新增「关于我们」移至最后一个) -->
+    <div class="section" id="functions-section">
         <div class="container">
-            <!-- 功能中心 -->
             <h2>功能中心</h2>
             <div class="grid">
+                <!-- 站内下载 -->
                 <a href="download.html" class="card">
                     <div class="card-icon">📥</div>
                     <h3>站内下载</h3>
                     <p>GitHub 下载，失败请尝试站外下载</p>
                 </a>
+                <!-- 站外下载 -->
                 <a href="javascript:void(0)" class="card" onclick="openDownloadModal()">
                     <div class="card-icon">☁️</div>
                     <h3>站外下载</h3>
                     <p>蓝奏云备用下载</p>
                 </a>
+                <!-- MC 状态监测 -->
                 <a href="mc-status.html" class="card">
                     <div class="card-icon">🎮</div>
                     <h3>MC 状态监测</h3>
                     <p>实时查看服务器状态</p>
                 </a>
-            </div>
-
-            <!-- 更多内容 -->
-            <h2>更多内容</h2>
-            <div class="grid">
+                <!-- 一中大辞典 -->
+                <a href="dictionary/dictionary.html" class="card">
+                    <div class="card-icon">📖</div>
+                    <h3>一中大辞典</h3>
+                    <p>回首高中三年的欢乐点滴</p>
+                </a>
+                <!-- 域名导航 -->
+                <a href="javascript:void(0)" class="card" onclick="openDomainNavModal()">
+                    <div class="card-icon">🌐</div>
+                    <h3>域名导航</h3>
+                    <p>导航至工作室的其他子域名站点</p>
+                </a>
+                <!-- 【移动】关于我们卡片（原位于更多内容，现移至功能中心最后一个） -->
                 <a href="about.html" class="card">
                     <div class="card-icon">ℹ️</div>
                     <h3>关于我们</h3>
                     <p>了解工作室的故事</p>
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 更多内容板块（新增友情链接卡片作为第一个，移除原有的关于我们卡片） -->
+    <div class="section" id="more-section">
+        <div class="container">
+            <h2>更多内容</h2>
+            <div class="grid">
+                <!-- 新增：友情链接卡片（弹窗） -->
+                <a href="javascript:void(0)" class="card" onclick="openFriendLinksModal()">
+                    <div class="card-icon">🔗</div>
+                    <h3>友情链接</h3>
+                    <p>里面都是超厉害的大佬</p>
+                </a>
+                <!-- 联系我们 -->
                 <a href="mailto:QxwkStudio@outlook.com" class="card">
                     <div class="card-icon">📬</div>
                     <h3>联系我们</h3>
                     <p>发送邮件与我们沟通</p>
                 </a>
+                <!-- 更多功能 -->
                 <a href="error.html" class="card">
                     <div class="card-icon">🛠️</div>
                     <h3>更多功能</h3>
@@ -428,7 +698,7 @@
     </div>
     
     <div class="footer">
-        <!-- 访客计数器位于版权信息上方 -->
+        <!-- 访客计数器 -->
         <div class="visitor-counter">
             <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
                  alt="访客计数器"
@@ -437,7 +707,7 @@
         &copy; 2026 青翔未阔工作室
     </div>
 
-    <!-- 站外下载选择弹窗 -->
+    <!-- 站外下载选择弹窗（原有） -->
     <div class="modal-overlay" id="downloadModal">
         <div class="modal-dialog">
             <h3>选择下载内容</h3>
@@ -464,59 +734,202 @@
         </div>
     </div>
 
+    <!-- 域名导航弹窗（主站链接 home.qxwkstudio.top） -->
+    <div class="modal-overlay" id="domainNavModal">
+        <div class="modal-dialog">
+            <h3>🌐 域名导航</h3>
+            <p class="modal-subtitle">导航至工作室的其他子域名站点</p>
+            <div class="modal-options">
+                <a href="https://home.qxwkstudio.top" target="_blank" class="modal-option">
+                    <div class="modal-option-name">
+                        主站
+                        <span class="modal-option-password">home.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">全新官网域名，聚合工作室动态</div>
+                </a>
+            </div>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多子域名站点正在筹备中，敬请期待~</p>
+            <button class="modal-close" onclick="closeDomainNavModal()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 友情链接弹窗（网址黄色框已移动到标题后面，与域名导航样式保持一致，且手机端强制不换行+滚动，避免意外折行） -->
+    <div class="modal-overlay" id="friendLinksModal">
+        <div class="modal-dialog">
+            <h3>🔗 友情链接</h3>
+            <p class="modal-subtitle">都是超厉害的大佬</p>
+            <div class="modal-options">
+                <!-- 友情链接 1: GitHub @StarsailsClover，网址框移至标题右侧，结构内聚 -->
+                <a href="https://github.com/StarsailsClover" target="_blank" class="modal-option">
+                    <div class="modal-option-name">
+                        <span>StarsailsClover · GitHub</span>
+                        <span class="modal-option-password">github.com/StarsailsClover</span>
+                    </div>
+                    <div class="modal-option-info">
+                        <span>反正就是很厉害的一个人</span>
+                    </div>
+                </a>
+                <!-- 友情链接 2: Vilinko 官方网站，网址框移至标题右侧 -->
+                <a href="https://www.vilinko.com/" target="_blank" class="modal-option">
+                    <div class="modal-option-name">
+                        <span>Vilinko 官方站</span>
+                        <span class="modal-option-password">vilinko.com</span>
+                    </div>
+                    <div class="modal-option-info">
+                        <span>开发了很多可爱的项目</span>
+                    </div>
+                </a>
+            </div>
+            <button class="modal-close" onclick="closeFriendLinksModal()">关闭</button>
+        </div>
+    </div>
+
     <script>
-        // 一言 API —— 使用官方 Hitokoto 接口（支持 CORS）
-        (async function fetchSaying() {
+        // 一言 API —— 失败时显示专属暖心句子
+        async function fetchSaying() {
             const sayingText = document.getElementById('sayingText');
             const sayingMeta = document.getElementById('sayingMeta');
-
+            
+            const fallbackText = "我喜欢你，仅你可见。";
+            const fallbackAuthor = "——猫猫";
+            
             try {
                 const response = await fetch('https://v1.hitokoto.cn/');
                 if (!response.ok) throw new Error('请求失败');
                 const data = await response.json();
-                sayingText.textContent = data.hitokoto || '“无论多么微小的邂逅，都必定有着某种意义。”';
-                sayingMeta.textContent = '—— ' + (data.from || '一言');
+                if (data && data.hitokoto && typeof data.hitokoto === 'string' && data.hitokoto.trim() !== '') {
+                    sayingText.textContent = data.hitokoto;
+                    sayingMeta.textContent = '—— ' + (data.from || '一言');
+                } else {
+                    sayingText.textContent = fallbackText;
+                    sayingMeta.textContent = fallbackAuthor;
+                }
             } catch (error) {
-                console.warn('一言加载失败', error);
-                sayingText.textContent = '“无论多么微小的邂逅，都必定有着某种意义。”';
-                sayingMeta.textContent = '—— 一言 · 离线模式';
+                console.warn('一言加载失败，使用默认暖心句子', error);
+                sayingText.textContent = fallbackText;
+                sayingMeta.textContent = fallbackAuthor;
             }
-        })();
+        }
+        
+        fetchSaying();
 
-        // 背景图片加载失败的降级处理
-        document.getElementById('bgImage').addEventListener('error', function() {
-            this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080"%3E%3Crect fill="%23222" width="1920" height="1080"/%3E%3Ctext fill="white" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E壁纸加载失败%3C/text%3E%3C/svg%3E';
-        });
+        // 背景降级
+        const bgImage = document.getElementById('bgImage');
+        if (bgImage) {
+            bgImage.addEventListener('error', function() {
+                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080"%3E%3Crect fill="%23222" width="1920" height="1080"/%3E%3Ctext fill="white" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E壁纸加载失败%3C/text%3E%3C/svg%3E';
+            });
+        }
 
-        // 点击滚动指示器，平滑滚动到下方功能区
-        document.querySelector('.scroll-indicator').addEventListener('click', function() {
-            document.querySelector('.section').scrollIntoView({ behavior: 'smooth' });
-        });
+        // 滚动指示器点击滚动至“功能中心”
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        if (scrollIndicator) {
+            scrollIndicator.addEventListener('click', function() {
+                const target = document.getElementById('functions-section');
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
 
         // 站外下载弹窗控制
         function openDownloadModal() {
-            document.getElementById('downloadModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeDownloadModal() {
-            document.getElementById('downloadModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // 点击遮罩层关闭
-        document.getElementById('downloadModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDownloadModal();
+            const modal = document.getElementById('downloadModal');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
-        });
+        }
+        function closeDownloadModal() {
+            const modal = document.getElementById('downloadModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
 
-        // ESC 键关闭
+        // 域名导航弹窗控制
+        function openDomainNavModal() {
+            const modal = document.getElementById('domainNavModal');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeDomainNavModal() {
+            const modal = document.getElementById('domainNavModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // 友情链接弹窗控制
+        function openFriendLinksModal() {
+            const modal = document.getElementById('friendLinksModal');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeFriendLinksModal() {
+            const modal = document.getElementById('friendLinksModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // 遮罩层关闭（三个弹窗）
+        const downloadModalOverlay = document.getElementById('downloadModal');
+        if (downloadModalOverlay) {
+            downloadModalOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeDownloadModal();
+            });
+        }
+        const domainModalOverlay = document.getElementById('domainNavModal');
+        if (domainModalOverlay) {
+            domainModalOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeDomainNavModal();
+            });
+        }
+        const friendModalOverlay = document.getElementById('friendLinksModal');
+        if (friendModalOverlay) {
+            friendModalOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeFriendLinksModal();
+            });
+        }
+
+        // ESC 键关闭所有弹窗
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeDownloadModal();
+                closeDomainNavModal();
+                closeFriendLinksModal();
             }
         });
+
+        // 品牌点击回到顶部
+        const brandLink = document.getElementById('homeTopLink');
+        if (brandLink) {
+            brandLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // 滚动时加强毛玻璃质感
+        const navbar = document.querySelector('.top-navbar');
+        if (navbar) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    navbar.style.background = 'rgba(8, 18, 26, 0.7)';
+                    navbar.style.backdropFilter = 'blur(16px)';
+                } else {
+                    navbar.style.background = 'rgba(10, 20, 30, 0.55)';
+                    navbar.style.backdropFilter = 'blur(14px)';
+                }
+            });
+        }
+        
     </script>
 </body>
 </html>

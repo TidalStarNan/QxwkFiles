@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>团队成员 - 青翔未阔工作室</title>
+    <link rel="icon" type="image/webp" href="/favicon.webp">
     <style>
         * {
             margin: 0;
@@ -36,7 +37,6 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin: 0;
         }
-        /* 返回按钮样式 — 完全统一为一中大辞典的 .home-link 样式 */
         .back-link a {
             display: inline-block;
             padding: 10px 20px;
@@ -57,7 +57,6 @@
             transform: scale(1.02);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        /* 窄屏时头部内容居中（与一中大辞典行为一致） */
         @media (max-width: 640px) {
             .header {
                 flex-direction: column;
@@ -65,7 +64,6 @@
                 text-align: center;
             }
         }
-
         .team-section {
             margin-bottom: 40px;
         }
@@ -94,7 +92,6 @@
             background: rgba(255,255,255,0.3);
             transform: translateY(-4px);
         }
-        /* 全宽卡片（用于工作室简介） */
         .member-card.full-width {
             grid-column: 1 / -1;
         }
@@ -134,7 +131,6 @@
             line-height: 1.4;
             word-break: break-word;
         }
-
         @media (max-width: 600px) {
             .member-card {
                 flex-direction: row;
@@ -163,7 +159,7 @@
             </div>
         </div>
 
-        <!-- 关于工作室（全宽卡片） -->
+        <!-- 关于工作室 -->
         <div class="team-section">
             <h2>📖 关于工作室</h2>
             <div class="member-grid">
@@ -184,9 +180,16 @@
             <h2>🌟 特别贡献</h2>
             <div class="member-grid" id="contribMembers"></div>
         </div>
+
+        <!-- 域名赞助（新增栏目，与上面并列） -->
+        <div class="team-section">
+            <h2>💰 域名赞助</h2>
+            <div class="member-grid" id="sponsorMembers"></div>
+        </div>
     </div>
 
     <script>
+        // ---------- 数据定义（完全并列，清晰易维护）----------
         const coreMembers = [
             { name: '青翔未阔', desc: '工作室创始人', avatar: 'https://weavatar.com/avatar/8493cacb76284a997ac75cf43bbd8a2ab3f1ee9127250f5ead7086a741e51f00?s=400' },
             { name: '米可-Micro', desc: '工作室联合创始人', avatar: 'https://weavatar.com/avatar/97519024b6678a197130591df9a76e6a6d80bd0d7aecd2b074dafee1dbc2512b?s=400' },
@@ -195,6 +198,7 @@
             { name: '阿江_233', desc: '首席指令师 & 建筑师', avatar: 'https://weavatar.com/avatar/e660bc25449e3cd818d29339cc66c6dd2c454bee03dd8c1f861d62e578f533ff?s=400' },
             { name: 'SG', desc: '建筑师&技术支持', avatar: '' }
         ];
+
         const contribMembers = [
             { name: '青翔熙亦', desc: '不知道写什么比较好', avatar: 'https://weavatar.com/avatar/ec8877cd68a143a1e0758d3ebaee9a5e46f0a941f1b694ada2dbc59a025fa0c3?s=400' },
             { name: '笨蛋小鞠子', desc: '建筑师 & 重工业爱好者', avatar: 'https://weavatar.com/avatar/6cdcb6920a64c3558c0e16158a15e855946c4e09504077771164b9fa1f49fa23?s=400' },
@@ -203,6 +207,18 @@
             { name: '风抚落意尘', desc: '喵？', avatar: 'https://weavatar.com/avatar/52f7cdc7cf35de19c3a08e7255409a7d878db720c93be0b40badd8321cd85250?s=400' }
         ];
 
+        // 域名赞助列表（金额以元为单位，显示在描述中）
+        const sponsorMembers = [
+            { name: '阿江_233', desc: '赞助 ¥40', avatar: 'https://weavatar.com/avatar/e660bc25449e3cd818d29339cc66c6dd2c454bee03dd8c1f861d62e578f533ff?s=400' },
+            { name: '风抚落意尘', desc: '赞助 ¥40', avatar: 'https://weavatar.com/avatar/52f7cdc7cf35de19c3a08e7255409a7d878db720c93be0b40badd8321cd85250?s=400' },
+            { name: '米可-Micro', desc: '赞助 ¥40', avatar: 'https://weavatar.com/avatar/97519024b6678a197130591df9a76e6a6d80bd0d7aecd2b074dafee1dbc2512b?s=400' },
+            { name: '笨蛋小鞠子', desc: '赞助 ¥40', avatar: 'https://weavatar.com/avatar/6cdcb6920a64c3558c0e16158a15e855946c4e09504077771164b9fa1f49fa23?s=400' },
+            { name: '心态不爱打牌', desc: '赞助 ¥35', avatar: 'https://weavatar.com/avatar/473bdd519211e37b2b31bd3231b81aa50ad8f5fdbc956d6087cc956f320f98be?s=400' },
+            { name: 'ZCNotFound', desc: '赞助 ¥18.88', avatar: 'https://weavatar.com/avatar/ea58b547036f75a4d21a21730bee85e21d0736aad56819d9e59d12a873fc6f21?s=400' },
+            { name: '青翔未阔', desc: '赞助 ¥16.12', avatar: 'https://weavatar.com/avatar/8493cacb76284a997ac75cf43bbd8a2ab3f1ee9127250f5ead7086a741e51f00?s=400' }
+        ];
+
+        // ---------- 通用渲染函数 ----------
         function renderMembers(containerId, members) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -233,8 +249,10 @@
             return div.innerHTML;
         }
 
+        // ---------- 渲染所有板块（并列调用，清晰简洁）----------
         renderMembers('coreMembers', coreMembers);
         renderMembers('contribMembers', contribMembers);
+        renderMembers('sponsorMembers', sponsorMembers);
     </script>
 </body>
 </html>
