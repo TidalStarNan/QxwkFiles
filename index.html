@@ -395,7 +395,7 @@
             font-size: 14px;
         }
 
-        /* 下载选择弹窗 & 域名导航弹窗 & 友情链接弹窗 (共用基础样式) */
+        /* 下载选择弹窗 & 域名导航弹窗 & 友情链接弹窗 (共用基础样式 - 已统一) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -423,9 +423,11 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             text-align: center;
             transition: max-width 0.2s ease;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
-        /* 电脑端适当放宽对话框，避免长网址换行 */
+        /* 电脑端适当放宽对话框，避免内容溢出 */
         @media (min-width: 640px) {
             .modal-dialog {
                 max-width: min(85vw, 680px);
@@ -475,39 +477,21 @@
             box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
         }
 
-        /* 选项标题区域：默认使用弹性布局 + 水平滚动防止换行（电脑端和手机端均优先不换行） */
+        /* ========= 关键修改：弹窗选项名称区域自适应换行，域名过长时自动换行 ========= */
         .modal-option-name {
             display: flex;
-            flex-wrap: nowrap;
-            align-items: baseline;
-            gap: 8px;
-            overflow-x: auto;
-            white-space: nowrap;
-            scrollbar-width: thin;
+            flex-wrap: wrap;           /* 允许换行，域名较长时自动折行 */
+            align-items: baseline;     /* 对齐基线，保持视觉整洁 */
+            gap: 8px 12px;            /* 行间距与列间距 */
             font-weight: 600;
             font-size: 1.05rem;
             margin-bottom: 6px;
-            padding-bottom: 2px;
+            /* 移除之前的强制不换行、溢出滚动等属性 */
+            white-space: normal;
+            overflow-x: visible;
         }
-        .modal-option-name::-webkit-scrollbar {
-            height: 3px;
-            background-color: #e2e8f0;
-        }
-        .modal-option-name::-webkit-scrollbar-thumb {
-            background-color: #94a3b8;
-            border-radius: 3px;
-        }
-
-        .modal-option-info {
-            font-size: 0.85rem;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        /* 提取码样式：背景框 + 暖色系 */
+        
+        /* 域名/提取码样式：支持长字符串内部自动换行，保证不溢出 */
         .modal-option-password {
             background: #fef3c7;
             color: #92400e;
@@ -517,10 +501,22 @@
             font-size: 0.85rem;
             font-weight: 500;
             display: inline-block;
-            white-space: nowrap;
+            white-space: normal;        /* 允许自动换行 */
+            word-break: break-word;    /* 长域名/长链接自动断开换行 */
+            overflow-wrap: break-word;
             letter-spacing: 0.3px;
             box-shadow: inset 0 0 0 1px rgba(255,215,130,0.6);
-            flex-shrink: 0;
+            flex-shrink: 0;            /* 避免被压缩过度，但换行时自然断行 */
+            max-width: 100%;
+        }
+
+        .modal-option-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .modal-close {
@@ -539,6 +535,66 @@
             background: #cbd5e1;
         }
 
+        /* ========= 域名导航弹窗专用：保持内部滚动区域，同时保证标题和按钮固定 ========= */
+        #domainNavModal .modal-dialog {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;       /* 禁止整个对话框滚动，让内部区域滚动 */
+            padding: 35px 30px;
+        }
+        #domainNavModal .modal-options {
+            flex: 1;
+            overflow-y: auto;
+            margin: 16px 0 8px 0;
+            padding-right: 6px;
+            scrollbar-width: thin;
+        }
+        #domainNavModal .modal-options::-webkit-scrollbar {
+            width: 5px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+        }
+        #domainNavModal .modal-options::-webkit-scrollbar-thumb {
+            background-color: #94a3b8;
+            border-radius: 5px;
+        }
+        /* 确保提示文字和关闭按钮不参与滚动 */
+        #domainNavModal .modal-dialog > p:last-of-type,
+        #domainNavModal .modal-close {
+            flex-shrink: 0;
+            margin-top: 16px;
+        }
+        
+        /* 友情链接弹窗同样统一风格 (与域名导航视觉一致，但不需要内部滚动，自然高度) */
+        #friendLinksModal .modal-dialog {
+            /* 保持和下载弹窗完全一致的样式，不添加额外滚动强制 */
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        /* 确保所有弹窗的选项区域在小屏幕中也优雅换行，且无意外滚动条 */
+        @media (max-width: 550px) {
+            .modal-dialog {
+                padding: 28px 20px;
+                max-width: 92vw;
+            }
+            /* 手机端同样允许换行，不强制一行，同时确保密码框自动断词 */
+            .modal-option-name {
+                flex-wrap: wrap;
+                white-space: normal;
+                overflow-x: visible;
+                gap: 8px 8px;
+            }
+            .modal-option-password {
+                white-space: normal;
+                word-break: break-all;   /* 极端窄屏下安全断开 */
+            }
+            .modal-option-info {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+        }
+
         /* 访客计数器样式 */
         .visitor-counter {
             margin-top: 0;
@@ -552,31 +608,6 @@
             max-width: 100%;
             height: auto;
             border-radius: 6px;
-        }
-        
-        /* 手机端弹性布局：仅当实在放不下时，允许信息区换行；但标题区强制不换行+滚动，避免提取码框意外折行 */
-        @media (max-width: 550px) {
-            .modal-dialog {
-                padding: 28px 20px;
-                max-width: 92vw;
-            }
-            /* 标题区保持不换行+水平滚动，确保提取码框始终在一行内，除非屏幕极窄则滚动可见 */
-            .modal-option-name {
-                flex-wrap: nowrap;
-                white-space: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            /* 信息区允许换行，但保持水平灵活 */
-            .modal-option-info {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            /* 确保提取码框本身不换行 */
-            .modal-option-password {
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
         }
     </style>
 </head>
@@ -625,42 +656,36 @@
         </div>
     </div>
 
-    <!-- 功能中心板块 (原有5个卡片 + 新增「关于我们」移至最后一个) -->
+    <!-- 功能中心板块 -->
     <div class="section" id="functions-section">
         <div class="container">
             <h2>功能中心</h2>
             <div class="grid">
-                <!-- 站内下载 -->
                 <a href="download.html" class="card">
                     <div class="card-icon">📥</div>
                     <h3>站内下载</h3>
                     <p>GitHub 下载，失败请尝试站外下载</p>
                 </a>
-                <!-- 站外下载 -->
                 <a href="javascript:void(0)" class="card" onclick="openDownloadModal()">
                     <div class="card-icon">☁️</div>
                     <h3>站外下载</h3>
                     <p>蓝奏云备用下载</p>
                 </a>
-                <!-- MC 状态监测 -->
                 <a href="mc-status.html" class="card">
                     <div class="card-icon">🎮</div>
                     <h3>MC 状态监测</h3>
                     <p>实时查看服务器状态</p>
                 </a>
-                <!-- 一中大辞典 -->
                 <a href="dictionary/dictionary.html" class="card">
                     <div class="card-icon">📖</div>
                     <h3>一中大辞典</h3>
                     <p>回首高中三年的欢乐点滴</p>
                 </a>
-                <!-- 域名导航 -->
                 <a href="javascript:void(0)" class="card" onclick="openDomainNavModal()">
                     <div class="card-icon">🌐</div>
                     <h3>域名导航</h3>
-                    <p>导航至工作室的其他子域名站点</p>
+                    <p>导航至其他子域名站点</p>
                 </a>
-                <!-- 【移动】关于我们卡片（原位于更多内容，现移至功能中心最后一个） -->
                 <a href="about.html" class="card">
                     <div class="card-icon">ℹ️</div>
                     <h3>关于我们</h3>
@@ -670,24 +695,21 @@
         </div>
     </div>
 
-    <!-- 更多内容板块（新增友情链接卡片作为第一个，移除原有的关于我们卡片） -->
+    <!-- 更多内容板块 -->
     <div class="section" id="more-section">
         <div class="container">
             <h2>更多内容</h2>
             <div class="grid">
-                <!-- 新增：友情链接卡片（弹窗） -->
                 <a href="javascript:void(0)" class="card" onclick="openFriendLinksModal()">
                     <div class="card-icon">🔗</div>
                     <h3>友情链接</h3>
-                    <p>里面都是超厉害的大佬</p>
+                    <p>通往其他有趣网站的链接</p>
                 </a>
-                <!-- 联系我们 -->
                 <a href="mailto:QxwkStudio@outlook.com" class="card">
                     <div class="card-icon">📬</div>
                     <h3>联系我们</h3>
-                    <p>发送邮件与我们沟通</p>
+                    <p>发送邮件与我们联系</p>
                 </a>
-                <!-- 更多功能 -->
                 <a href="error.html" class="card">
                     <div class="card-icon">🛠️</div>
                     <h3>更多功能</h3>
@@ -698,7 +720,6 @@
     </div>
     
     <div class="footer">
-        <!-- 访客计数器 -->
         <div class="visitor-counter">
             <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
                  alt="访客计数器"
@@ -707,14 +728,14 @@
         &copy; 2026 青翔未阔工作室
     </div>
 
-    <!-- 站外下载选择弹窗（原有） -->
+    <!-- ========= 站外下载弹窗 (样式统一) ========= -->
     <div class="modal-overlay" id="downloadModal">
         <div class="modal-dialog">
             <h3>选择下载内容</h3>
             <p class="modal-subtitle">请选择您需要下载的客户端</p>
             <div class="modal-options">
                 <a href="https://meng-2943.lanzoum.com/b007tq8tzg" 
-                   target="_blank" 
+                   target="_blank" rel="noopener noreferrer"
                    class="modal-option">
                     <div class="modal-option-name">滦平一中服务器客户端</div>
                     <div class="modal-option-info">
@@ -722,7 +743,7 @@
                     </div>
                 </a>
                 <a href="https://meng-2943.lanzoum.com/b007u56tcb" 
-                   target="_blank" 
+                   target="_blank" rel="noopener noreferrer"
                    class="modal-option">
                     <div class="modal-option-name">2026生存服务器客户端</div>
                     <div class="modal-option-info">
@@ -734,18 +755,60 @@
         </div>
     </div>
 
-    <!-- 域名导航弹窗（主站链接 home.qxwkstudio.top） -->
+    <!-- ========= 域名导航弹窗 (完全支持长域名换行，滚动区域保留) ========= -->
     <div class="modal-overlay" id="domainNavModal">
         <div class="modal-dialog">
             <h3>🌐 域名导航</h3>
-            <p class="modal-subtitle">导航至工作室的其他子域名站点</p>
+            <p class="modal-subtitle">导航至其他子域名站点（不止是我们的项目哦）</p>
             <div class="modal-options">
-                <a href="https://home.qxwkstudio.top" target="_blank" class="modal-option">
+                <a href="https://home.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
-                        主站
+                        青翔未阔 · 主站
                         <span class="modal-option-password">home.qxwkstudio.top</span>
                     </div>
                     <div class="modal-option-info">全新官网域名，聚合工作室动态</div>
+                </a>
+                <a href="https://home.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">
+                        Sails · 个人主页
+                        <span class="modal-option-password">home.sails.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">StarsailsClover的个人主页，汇聚项目与动态</div>
+                </a>
+                <a href="https://fastlink.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">
+                        Sails · FastLink
+                        <span class="modal-option-password">fastlink.sails.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">异闪 FastLink：新一代全能网络协议</div>
+                </a>
+                <a href="https://mnmcp.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">
+                        Sails · MnMcP
+                        <span class="modal-option-password">mnmcp.sails.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">Minecraft ↔ MiniWorld 互联</div>
+                </a>
+                <a href="https://blockconnect.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">
+                        Sails · BlockConnect
+                        <span class="modal-option-password">blockconnect.sails.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">世界联结 BlockConnect：Connect the Worlds, Enjoy with Players.</div>
+                </a>
+                <a href="https://hpbi.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">
+                        Sails · HPBI
+                        <span class="modal-option-password">hpbi.sails.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">人类生产力助推计划 HPBI: 人工智能赋能生产力提升工具</div>
+                </a>
+                <a href="https://oxygenai.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">
+                        Sails · Oxygen AI
+                        <span class="modal-option-password">oxygenai.sails.qxwkstudio.top</span>
+                    </div>
+                    <div class="modal-option-info">源氧 Oxygen AI Lab: 人工智能实验室</div>
                 </a>
             </div>
             <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多子域名站点正在筹备中，敬请期待~</p>
@@ -753,30 +816,28 @@
         </div>
     </div>
 
-    <!-- 友情链接弹窗（网址黄色框已移动到标题后面，与域名导航样式保持一致，且手机端强制不换行+滚动，避免意外折行） -->
+    <!-- ========= 友情链接弹窗 (网址标签同样支持换行，样式与域名导航一致) ========= -->
     <div class="modal-overlay" id="friendLinksModal">
         <div class="modal-dialog">
             <h3>🔗 友情链接</h3>
-            <p class="modal-subtitle">都是超厉害的大佬</p>
+            <p class="modal-subtitle">通往其他有趣网站和个人主页的链接</p>
             <div class="modal-options">
-                <!-- 友情链接 1: GitHub @StarsailsClover，网址框移至标题右侧，结构内聚 -->
-                <a href="https://github.com/StarsailsClover" target="_blank" class="modal-option">
+                <a href="https://github.com/StarsailsClover" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
                         <span>StarsailsClover · GitHub</span>
                         <span class="modal-option-password">github.com/StarsailsClover</span>
                     </div>
                     <div class="modal-option-info">
-                        <span>反正就是很厉害的一个人</span>
+                        <span>很多高级的项目，反正就是很厉害的一个人</span>
                     </div>
                 </a>
-                <!-- 友情链接 2: Vilinko 官方网站，网址框移至标题右侧 -->
-                <a href="https://www.vilinko.com/" target="_blank" class="modal-option">
+                <a href="https://www.vilinko.com/" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
                         <span>Vilinko 官方站</span>
                         <span class="modal-option-password">vilinko.com</span>
                     </div>
                     <div class="modal-option-info">
-                        <span>开发了很多可爱的项目</span>
+                        <span>Vertillusion Studio可爱系工作室，开发了很多可爱的项目</span>
                     </div>
                 </a>
             </div>
@@ -821,7 +882,6 @@
             });
         }
 
-        // 滚动指示器点击滚动至“功能中心”
         const scrollIndicator = document.querySelector('.scroll-indicator');
         if (scrollIndicator) {
             scrollIndicator.addEventListener('click', function() {
@@ -830,74 +890,37 @@
             });
         }
 
-        // 站外下载弹窗控制
+        // 弹窗控制函数
         function openDownloadModal() {
             const modal = document.getElementById('downloadModal');
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
         }
         function closeDownloadModal() {
             const modal = document.getElementById('downloadModal');
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
+            if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
         }
-
-        // 域名导航弹窗控制
         function openDomainNavModal() {
             const modal = document.getElementById('domainNavModal');
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
         }
         function closeDomainNavModal() {
             const modal = document.getElementById('domainNavModal');
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
+            if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
         }
-
-        // 友情链接弹窗控制
         function openFriendLinksModal() {
             const modal = document.getElementById('friendLinksModal');
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
         }
         function closeFriendLinksModal() {
             const modal = document.getElementById('friendLinksModal');
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
+            if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
         }
 
-        // 遮罩层关闭（三个弹窗）
-        const downloadModalOverlay = document.getElementById('downloadModal');
-        if (downloadModalOverlay) {
-            downloadModalOverlay.addEventListener('click', function(e) {
-                if (e.target === this) closeDownloadModal();
-            });
-        }
-        const domainModalOverlay = document.getElementById('domainNavModal');
-        if (domainModalOverlay) {
-            domainModalOverlay.addEventListener('click', function(e) {
-                if (e.target === this) closeDomainNavModal();
-            });
-        }
-        const friendModalOverlay = document.getElementById('friendLinksModal');
-        if (friendModalOverlay) {
-            friendModalOverlay.addEventListener('click', function(e) {
-                if (e.target === this) closeFriendLinksModal();
-            });
-        }
-
+        // 遮罩层关闭
+        document.getElementById('downloadModal')?.addEventListener('click', function(e) { if (e.target === this) closeDownloadModal(); });
+        document.getElementById('domainNavModal')?.addEventListener('click', function(e) { if (e.target === this) closeDomainNavModal(); });
+        document.getElementById('friendLinksModal')?.addEventListener('click', function(e) { if (e.target === this) closeFriendLinksModal(); });
+        
         // ESC 键关闭所有弹窗
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -907,7 +930,7 @@
             }
         });
 
-        // 品牌点击回到顶部
+        // 品牌回到顶部
         const brandLink = document.getElementById('homeTopLink');
         if (brandLink) {
             brandLink.addEventListener('click', (e) => {
@@ -929,7 +952,6 @@
                 }
             });
         }
-        
     </script>
 </body>
 </html>
