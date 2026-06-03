@@ -75,5 +75,5 @@
 - 壁纸：修改 <img id="bgImage"> 的 src 地址。
 - 一言：修改 fetchSaying() 函数中的 API 端点。
 
-### 🌐 在线演示：[https://home.qxwkstudio.top/仓库名](https://home.qxwkstudio.top/)
+### 🌐 在线演示：[https://home.qxwkstudio.top](https://home.qxwkstudio.top/)
 ### 📧 联系邮箱：QxwkStudio@outlook.com
