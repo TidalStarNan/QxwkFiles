@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>青翔未阔工作室</title>
-    <meta name="description" content="这里是青翔未阔工作室官方网站~ 欢迎访问全新的域名">
+    <meta name="description" content="青翔未阔工作室官网 - 资源中心、网站导航与更多功能">
     <link rel="icon" type="image/webp" href="/favicon.webp">
     <style>
         * {
@@ -13,24 +13,25 @@
             box-sizing: border-box;
         }
 
-        /* 全局滚动平滑 + 固定顶栏偏移预留 (确保锚点滚动不被顶栏遮挡) */
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: 75px;   /* 固定顶栏高度偏移量，兼容现代浏览器 */
+            scroll-padding-top: 75px;
         }
 
+        /* 全局背景统一为 #f8fafc，底部页脚除外 */
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: #111;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8fafc;
         }
 
-        /* 为锚点区域增加额外的滚动边距，确保兼容性 */
-        #functions-section,
-        #more-section {
+        /* 分组区块滚动偏移（适配固定顶栏） */
+        #resources-section,
+        #site-nav-section,
+        #more-features-section {
             scroll-margin-top: 75px;
         }
 
-        /* ========= 固定顶栏 (毛玻璃悬浮效果) ========= */
+        /* ========= 固定顶栏 (毛玻璃效果) ========= */
         .top-navbar {
             position: fixed;
             top: 0;
@@ -45,34 +46,17 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        /* 顶栏内部容器：强制横排 + 窄屏可滚动，绝不换行 */
         .navbar-container {
             max-width: 1300px;
             margin: 0 auto;
             padding: 0 28px;
             display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;          /* 强制不换行 */
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
             min-height: 68px;
-            overflow-x: auto;           /* 宽度不足时允许水平滚动 */
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;      /* 火狐细滚动条 */
-        }
-        /* 隐藏滚动条但保持功能 (可选，保持美观) */
-        .navbar-container::-webkit-scrollbar {
-            height: 3px;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .navbar-container::-webkit-scrollbar-thumb {
-            background-color: rgba(255,255,255,0.4);
-            border-radius: 3px;
+            position: relative;
         }
 
-        /* 左侧品牌：不允许压缩，保证完整显示 */
         .navbar-brand {
             display: flex;
             align-items: center;
@@ -84,7 +68,7 @@
             letter-spacing: 1.5px;
             transition: opacity 0.2s;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            flex-shrink: 0;             /* 关键：防止被压缩 */
+            flex-shrink: 0;
         }
         .navbar-brand:hover {
             opacity: 0.85;
@@ -102,49 +86,80 @@
             white-space: nowrap;
         }
 
-        /* 右侧导航菜单 — 只包含「功能中心」和「更多内容」，强制一行 */
-        .navbar-menu {
+        /* ========= 汉堡菜单（移动端适配） ========= */
+        .hamburger-wrapper {
+            position: relative;
+            z-index: 1001;
+        }
+        .hamburger-icon {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            list-style: none;
-            flex-shrink: 0;             /* 关键：防止压缩，保证菜单项完整横排 */
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 0;
+            transition: all 0.2s;
         }
-        .navbar-menu li {
-            list-style: none;
-            flex-shrink: 0;
+        .hamburger-icon span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 6px;
+            transition: 0.2s;
         }
-        .nav-link {
-            display: inline-block;
-            padding: 8px 20px;
-            color: rgba(255, 255, 255, 0.92);
+        .hamburger-icon:hover span {
+            background-color: #90cdf4;
+        }
+        .menu-panel {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: rgba(15, 25, 35, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 12px 0;
+            min-width: 200px;
+            list-style: none;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, visibility 0.2s, transform 0.2s;
+            z-index: 1100;
+        }
+        .menu-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .menu-panel li {
+            list-style: none;
+        }
+        .menu-panel a {
+            display: block;
+            padding: 12px 24px;
+            color: #f1f5f9;
             text-decoration: none;
             font-size: 1rem;
             font-weight: 500;
-            border-radius: 40px;
-            transition: all 0.25s ease;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(4px);
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
             letter-spacing: 0.5px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            white-space: nowrap;        /* 按钮文字不换行 */
         }
-        .nav-link:hover {
-            background: rgba(59, 130, 246, 0.65);
-            border-color: rgba(255, 255, 255, 0.5);
+        .menu-panel a:hover {
+            background: rgba(59, 130, 246, 0.6);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-        }
-        .nav-link:active {
-            transform: translateY(1px);
         }
 
-        /* 移动端适配：只调整内边距和间距，绝不换行，横排滚动保留 */
+        /* 移动端样式微调 (全面优化手机尺寸) */
         @media (max-width: 680px) {
             .navbar-container {
                 padding: 0 16px;
-                gap: 16px;
                 min-height: 60px;
             }
             .navbar-brand {
@@ -154,28 +169,104 @@
             .brand-icon {
                 font-size: 1.4rem;
             }
-            .nav-link {
-                padding: 6px 16px;
+            .menu-panel {
+                top: 54px;
+                min-width: 170px;
+            }
+            .menu-panel a {
+                padding: 10px 20px;
                 font-size: 0.9rem;
             }
-            /* 确保滚动偏移依然适配小屏幕顶栏高度 */
             html {
                 scroll-padding-top: 70px;
             }
-            #functions-section,
-            #more-section {
+            #resources-section,
+            #site-nav-section,
+            #more-features-section {
                 scroll-margin-top: 70px;
+            }
+
+            /* 减小卡片整体尺寸 */
+            .card {
+                padding: 20px 15px;
+            }
+            .card-icon {
+                font-size: 36px;
+                margin-bottom: 12px;
+            }
+            .card h3 {
+                font-size: 1.2rem;
+                margin-bottom: 6px;
+            }
+            .card p {
+                font-size: 0.85rem;
+            }
+
+            /* 分区标题缩小 */
+            .section h2 {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+
+            /* 网格间距减小 */
+            .grid {
+                gap: 18px;
+            }
+
+            /* 公告栏区域压缩 */
+            .announcement-section {
+                padding: 20px 16px;
+            }
+            .announcement-item {
+                padding: 12px 16px;
+                gap: 8px;
+                font-size: 0.9rem;
+            }
+            .announcement-date {
+                font-size: 0.75rem;
+                min-width: 70px;
+            }
+
+            /* 区块上下间距减小 */
+            .section {
+                padding: 30px 16px;
+                margin-bottom: 30px;
+            }
+
+            /* 弹窗内边距与字体调整 */
+            .modal-dialog {
+                padding: 25px 20px;
+            }
+            .modal-dialog h3 {
+                font-size: 1.4rem;
+            }
+            .modal-option {
+                padding: 14px 16px;
+            }
+            .modal-option-name {
+                font-size: 0.95rem;
+                gap: 6px 10px;
+            }
+            .modal-option-password {
+                font-size: 0.75rem;
+                padding: 2px 6px;
+            }
+            .modal-option-info {
+                font-size: 0.8rem;
+            }
+            .modal-close {
+                padding: 8px 22px;
+                font-size: 0.9rem;
             }
         }
 
-        /* 全屏背景图片区域 */
+        /* 全屏英雄区（每日壁纸背景） */
         .hero {
             position: relative;
             width: 100%;
             height: 100vh;
             overflow: hidden;
         }
-
         .hero img {
             position: absolute;
             top: 0;
@@ -184,7 +275,6 @@
             height: 100%;
             object-fit: cover;
         }
-
         .hero-overlay {
             position: absolute;
             top: 50%;
@@ -202,7 +292,6 @@
             width: 90%;
             margin-top: 20px;
         }
-
         @media (max-width: 680px) {
             .hero-overlay {
                 padding: 20px 24px;
@@ -212,14 +301,21 @@
             .hero-overlay h1 {
                 font-size: 2.4rem;
             }
+            .hero-overlay .subtitle {
+                font-size: 1rem;
+            }
+            .saying-text {
+                font-size: 0.9rem;
+            }
+            .saying-meta {
+                font-size: 0.7rem;
+            }
         }
-
         .hero-overlay h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
             letter-spacing: 4px;
         }
-
         .hero-overlay .subtitle {
             font-size: 1.2rem;
             margin-bottom: 20px;
@@ -227,7 +323,6 @@
             font-weight: 400;
             letter-spacing: 2px;
         }
-
         .saying-box {
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.3);
@@ -239,20 +334,18 @@
             align-items: center;
             justify-content: center;
         }
-
         .saying-text {
             line-height: 1.6;
             font-style: italic;
             max-width: 600px;
         }
-
         .saying-meta {
             margin-top: 8px;
             font-size: 0.8rem;
             opacity: 0.7;
         }
 
-        /* 向下滚动提示 */
+        /* 滚动提示（引导用户向下） */
         .scroll-indicator {
             position: absolute;
             bottom: 40px;
@@ -269,13 +362,20 @@
             cursor: pointer;
             user-select: none;
         }
-
+        @media (max-width: 680px) {
+            .scroll-indicator span {
+                font-size: 0.8rem;
+            }
+            .scroll-arrow {
+                width: 20px;
+                height: 20px;
+            }
+        }
         .scroll-indicator span {
             font-size: 0.9rem;
             letter-spacing: 2px;
             opacity: 0.85;
         }
-
         .scroll-arrow {
             width: 24px;
             height: 24px;
@@ -284,27 +384,21 @@
             transform: rotate(45deg);
             opacity: 0.85;
         }
-
         @keyframes float {
-            0%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            50% {
-                transform: translateX(-50%) translateY(10px);
-            }
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
         }
 
-        /* 公告区域样式 */
+        /* 公告栏背景统一为 #f8fafc */
         .announcement-section {
             background: #f8fafc;
             padding: 30px 20px;
+            border-bottom: 1px solid #e2e8f0;
         }
-
         .announcement-container {
             max-width: 1000px;
             margin: 0 auto;
         }
-
         .announcement-item {
             background: #ffffff;
             border-left: 4px solid #3b82f6;
@@ -317,7 +411,6 @@
             gap: 12px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
-
         .announcement-date {
             font-size: 0.85rem;
             color: #64748b;
@@ -326,36 +419,31 @@
             min-width: 85px;
         }
 
-        .announcement-content {
-            line-height: 1.5;
-        }
-
-        /* 下方功能区 (整体背景) */
+        /* 通用内容区块样式，背景统一为 #f8fafc */
         .section {
-            padding: 40px 20px;
             background: #f8fafc;
-            min-height: 50vh;
+            padding: 40px 20px;
+            margin-bottom: 40px;
         }
-
+        .section:last-of-type {
+            margin-bottom: 0;
+        }
         .container {
             max-width: 1000px;
             margin: 0 auto;
         }
-
         .section h2 {
             font-size: 2rem;
             color: #1e293b;
             margin-bottom: 30px;
             text-align: center;
         }
-
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 25px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
-
         .card {
             background: white;
             border-radius: 16px;
@@ -367,35 +455,39 @@
             color: #1e293b;
             display: block;
         }
-
         .card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
         }
-
         .card-icon {
             font-size: 48px;
             margin-bottom: 15px;
         }
-
         .card h3 {
             font-size: 1.4rem;
             margin-bottom: 8px;
         }
-
         .card p {
             color: #64748b;
             font-size: 0.95rem;
         }
 
+        /* 底部页脚保持黑色 #111111 */
         .footer {
             text-align: center;
             padding: 40px 20px;
             color: #94a3b8;
             font-size: 14px;
+            background: #111111;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer .visitor-counter img {
+            filter: brightness(0.9);
+            max-width: 100%;
+            height: auto;
         }
 
-        /* 下载选择弹窗 & 域名导航弹窗 & 友情链接弹窗 (共用基础样式 - 已统一) */
+        /* 弹窗（模态框）通用样式 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -409,11 +501,9 @@
             align-items: center;
             backdrop-filter: blur(3px);
         }
-
         .modal-overlay.active {
             display: flex;
         }
-
         .modal-dialog {
             background: white;
             border-radius: 24px;
@@ -422,41 +512,30 @@
             width: 90%;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             text-align: center;
-            transition: max-width 0.2s ease;
             max-height: 85vh;
             overflow-y: auto;
         }
-
-        /* 电脑端适当放宽对话框，避免内容溢出 */
         @media (min-width: 640px) {
-            .modal-dialog {
-                max-width: min(85vw, 680px);
-            }
+            .modal-dialog { max-width: min(85vw, 680px); }
         }
         @media (min-width: 1024px) {
-            .modal-dialog {
-                max-width: min(75vw, 800px);
-            }
+            .modal-dialog { max-width: min(75vw, 800px); }
         }
-
         .modal-dialog h3 {
             font-size: 1.6rem;
             margin-bottom: 10px;
             color: #1e293b;
         }
-
         .modal-dialog .modal-subtitle {
             font-size: 0.95rem;
             color: #64748b;
             margin-bottom: 25px;
         }
-
         .modal-options {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-
         .modal-option {
             background: #f8fafc;
             border: 2px solid #e2e8f0;
@@ -469,29 +548,21 @@
             color: #1e293b;
             display: block;
         }
-
         .modal-option:hover {
             border-color: #3b82f6;
             background: #eff6ff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
         }
-
-        /* ========= 关键修改：弹窗选项名称区域自适应换行，域名过长时自动换行 ========= */
         .modal-option-name {
             display: flex;
-            flex-wrap: wrap;           /* 允许换行，域名较长时自动折行 */
-            align-items: baseline;     /* 对齐基线，保持视觉整洁 */
-            gap: 8px 12px;            /* 行间距与列间距 */
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 8px 12px;
             font-weight: 600;
             font-size: 1.05rem;
             margin-bottom: 6px;
-            /* 移除之前的强制不换行、溢出滚动等属性 */
             white-space: normal;
-            overflow-x: visible;
         }
-        
-        /* 域名/提取码样式：支持长字符串内部自动换行，保证不溢出 */
         .modal-option-password {
             background: #fef3c7;
             color: #92400e;
@@ -501,15 +572,11 @@
             font-size: 0.85rem;
             font-weight: 500;
             display: inline-block;
-            white-space: normal;        /* 允许自动换行 */
-            word-break: break-word;    /* 长域名/长链接自动断开换行 */
+            white-space: normal;
+            word-break: break-word;
             overflow-wrap: break-word;
-            letter-spacing: 0.3px;
-            box-shadow: inset 0 0 0 1px rgba(255,215,130,0.6);
-            flex-shrink: 0;            /* 避免被压缩过度，但换行时自然断行 */
             max-width: 100%;
         }
-
         .modal-option-info {
             font-size: 0.85rem;
             color: #64748b;
@@ -518,7 +585,6 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .modal-close {
             margin-top: 24px;
             padding: 10px 28px;
@@ -528,81 +594,30 @@
             cursor: pointer;
             font-size: 0.95rem;
             color: #475569;
-            transition: background 0.2s;
         }
-
         .modal-close:hover {
             background: #cbd5e1;
         }
-
-        /* ========= 域名导航弹窗专用：保持内部滚动区域，同时保证标题和按钮固定 ========= */
-        #domainNavModal .modal-dialog {
+        .modal-scroll-area {
             display: flex;
             flex-direction: column;
-            overflow: hidden;       /* 禁止整个对话框滚动，让内部区域滚动 */
-            padding: 35px 30px;
+            overflow: hidden;
         }
-        #domainNavModal .modal-options {
+        .modal-scroll-area .modal-options {
             flex: 1;
             overflow-y: auto;
             margin: 16px 0 8px 0;
             padding-right: 6px;
             scrollbar-width: thin;
         }
-        #domainNavModal .modal-options::-webkit-scrollbar {
-            width: 5px;
-            background-color: #e2e8f0;
-            border-radius: 5px;
-        }
-        #domainNavModal .modal-options::-webkit-scrollbar-thumb {
-            background-color: #94a3b8;
-            border-radius: 5px;
-        }
-        /* 确保提示文字和关闭按钮不参与滚动 */
-        #domainNavModal .modal-dialog > p:last-of-type,
-        #domainNavModal .modal-close {
-            flex-shrink: 0;
-            margin-top: 16px;
-        }
-        
-        /* 友情链接弹窗同样统一风格 (与域名导航视觉一致，但不需要内部滚动，自然高度) */
-        #friendLinksModal .modal-dialog {
-            /* 保持和下载弹窗完全一致的样式，不添加额外滚动强制 */
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        
-        /* 确保所有弹窗的选项区域在小屏幕中也优雅换行，且无意外滚动条 */
         @media (max-width: 550px) {
             .modal-dialog {
                 padding: 28px 20px;
-                max-width: 92vw;
             }
-            /* 手机端同样允许换行，不强制一行，同时确保密码框自动断词 */
             .modal-option-name {
                 flex-wrap: wrap;
-                white-space: normal;
-                overflow-x: visible;
                 gap: 8px 8px;
             }
-            .modal-option-password {
-                white-space: normal;
-                word-break: break-all;   /* 极端窄屏下安全断开 */
-            }
-            .modal-option-info {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-        }
-
-        /* 访客计数器样式 */
-        .visitor-counter {
-            margin-top: 0;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
         }
         .visitor-counter img {
             max-width: 100%;
@@ -613,21 +628,29 @@
 </head>
 <body>
 
-    <!-- ========= 毛玻璃顶栏：横排永不换行，窄屏可滑动 ========= -->
+    <!-- 固定顶栏：毛玻璃导航+汉堡菜单 -->
     <header class="top-navbar">
         <div class="navbar-container">
             <a href="#" class="navbar-brand" id="homeTopLink">
                 <span class="brand-icon">▱</span>
                 <span class="brand-text">青翔未阔工作室</span>
             </a>
-            <ul class="navbar-menu">
-                <li><a href="#functions-section" class="nav-link">功能中心</a></li>
-                <li><a href="#more-section" class="nav-link">更多内容</a></li>
-            </ul>
+            <div class="hamburger-wrapper">
+                <button class="hamburger-icon" id="hamburgerBtn" aria-label="菜单">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="menu-panel" id="menuPanel">
+                    <li><a href="#resources-section" class="menu-link">资源中心</a></li>
+                    <li><a href="#site-nav-section" class="menu-link">网站导航</a></li>
+                    <li><a href="#more-features-section" class="menu-link">更多功能</a></li>
+                </ul>
+            </div>
         </div>
     </header>
 
-    <!-- 全屏背景图 -->
+    <!-- 全屏英雄区（必应每日壁纸 + 一言） -->
     <div class="hero">
         <img src="https://uapis.cn/api/v1/image/bing-daily?resolution=1080" alt="必应每日壁纸" id="bgImage">
         <div class="hero-overlay">
@@ -638,15 +661,13 @@
                 <div class="saying-meta" id="sayingMeta"></div>
             </div>
         </div>
-
-        <!-- 向下滚动提示 -->
-        <div class="scroll-indicator" title="向下滚动查看更多">
+        <div class="scroll-indicator" title="向下滚动查看资源中心">
             <span>向下滚动</span>
             <div class="scroll-arrow"></div>
         </div>
     </div>
 
-    <!-- 单条公告区域 -->
+    <!-- 公告栏 -->
     <div class="announcement-section">
         <div class="announcement-container">
             <div class="announcement-item">
@@ -656,10 +677,10 @@
         </div>
     </div>
 
-    <!-- 功能中心板块 -->
-    <div class="section" id="functions-section">
+    <!-- 资源中心模块 -->
+    <div class="section" id="resources-section">
         <div class="container">
-            <h2>功能中心</h2>
+            <h2>📦 资源中心</h2>
             <div class="grid">
                 <a href="download.html" class="card">
                     <div class="card-icon">📥</div>
@@ -671,44 +692,53 @@
                     <h3>站外下载</h3>
                     <p>蓝奏云备用下载</p>
                 </a>
-                <a href="mc-status.html" class="card">
-                    <div class="card-icon">🎮</div>
-                    <h3>MC 状态监测</h3>
-                    <p>实时查看服务器状态</p>
-                </a>
                 <a href="dictionary/dictionary.html" class="card">
                     <div class="card-icon">📖</div>
                     <h3>一中大辞典</h3>
                     <p>回首高中三年的欢乐点滴</p>
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 网站导航模块（域名导航/外部项目/友情链接） -->
+    <div class="section" id="site-nav-section">
+        <div class="container">
+            <h2>🧭 网站导航</h2>
+            <div class="grid">
                 <a href="javascript:void(0)" class="card" onclick="openDomainNavModal()">
                     <div class="card-icon">🌐</div>
                     <h3>域名导航</h3>
                     <p>导航至其他子域名站点</p>
                 </a>
-                <a href="about.html" class="card">
-                    <div class="card-icon">ℹ️</div>
-                    <h3>关于我们</h3>
-                    <p>了解工作室的故事</p>
+                <a href="javascript:void(0)" class="card" onclick="openExternalProjectsModal()">
+                    <div class="card-icon">🚀</div>
+                    <h3>外部项目</h3>
+                    <p>发现来自合作伙伴的酷炫项目</p>
                 </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 更多内容板块 -->
-    <div class="section" id="more-section">
-        <div class="container">
-            <h2>更多内容</h2>
-            <div class="grid">
                 <a href="javascript:void(0)" class="card" onclick="openFriendLinksModal()">
                     <div class="card-icon">🔗</div>
                     <h3>友情链接</h3>
                     <p>通往其他有趣网站的链接</p>
                 </a>
-                <a href="mailto:QxwkStudio@outlook.com" class="card">
-                    <div class="card-icon">📬</div>
-                    <h3>联系我们</h3>
-                    <p>发送邮件与我们联系</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 更多功能模块 -->
+    <div class="section" id="more-features-section">
+        <div class="container">
+            <h2>⚙️ 更多功能</h2>
+            <div class="grid">
+                <a href="mc-status.html" class="card">
+                    <div class="card-icon">🎮</div>
+                    <h3>MC 状态监测</h3>
+                    <p>实时查看服务器状态</p>
+                </a>
+                <a href="about.html" class="card">
+                    <div class="card-icon">ℹ️</div>
+                    <h3>关于我们</h3>
+                    <p>了解工作室的故事</p>
                 </a>
                 <a href="error.html" class="card">
                     <div class="card-icon">🛠️</div>
@@ -718,7 +748,8 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- 页脚区域：访客计数器 + 版权（黑色背景保持） -->
     <div class="footer">
         <div class="visitor-counter">
             <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
@@ -728,38 +759,30 @@
         &copy; 2026 青翔未阔工作室
     </div>
 
-    <!-- ========= 站外下载弹窗 (样式统一) ========= -->
+    <!-- 站外下载弹窗（蓝奏云） -->
     <div class="modal-overlay" id="downloadModal">
         <div class="modal-dialog">
             <h3>选择下载内容</h3>
             <p class="modal-subtitle">请选择您需要下载的客户端</p>
             <div class="modal-options">
-                <a href="https://meng-2943.lanzoum.com/b007tq8tzg" 
-                   target="_blank" rel="noopener noreferrer"
-                   class="modal-option">
+                <a href="https://meng-2943.lanzoum.com/b007tq8tzg" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">滦平一中服务器客户端</div>
-                    <div class="modal-option-info">
-                        提取码：<span class="modal-option-password">lpyz</span>
-                    </div>
+                    <div class="modal-option-info">提取码：<span class="modal-option-password">lpyz</span></div>
                 </a>
-                <a href="https://meng-2943.lanzoum.com/b007u56tcb" 
-                   target="_blank" rel="noopener noreferrer"
-                   class="modal-option">
+                <a href="https://meng-2943.lanzoum.com/b007u56tcb" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">2026生存服务器客户端</div>
-                    <div class="modal-option-info">
-                        提取码：<span class="modal-option-password">Vaca</span>
-                    </div>
+                    <div class="modal-option-info">提取码：<span class="modal-option-password">Vaca</span></div>
                 </a>
             </div>
             <button class="modal-close" onclick="closeDownloadModal()">关闭</button>
         </div>
     </div>
 
-    <!-- ========= 域名导航弹窗 (完全支持长域名换行，滚动区域保留) ========= -->
+    <!-- 域名导航弹窗（主站 + 邮箱站） -->
     <div class="modal-overlay" id="domainNavModal">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-scroll-area">
             <h3>🌐 域名导航</h3>
-            <p class="modal-subtitle">导航至其他子域名站点（不止是我们的项目哦）</p>
+            <p class="modal-subtitle">官方主站与核心域名</p>
             <div class="modal-options">
                 <a href="https://home.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
@@ -768,55 +791,57 @@
                     </div>
                     <div class="modal-option-info">全新官网域名，聚合工作室动态</div>
                 </a>
-                <a href="https://home.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                <!-- 企业邮箱站，跳转至阿里云企业邮箱 -->
+                <a href="https://qiye.aliyun.com" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
-                        Sails · 个人主页
-                        <span class="modal-option-password">home.sails.qxwkstudio.top</span>
+                        青翔未阔 · 邮箱站
+                        <span class="modal-option-password">mail.qxwkstudio.top</span>
                     </div>
-                    <div class="modal-option-info">StarsailsClover的个人主页，汇聚项目与动态</div>
-                </a>
-                <a href="https://fastlink.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
-                    <div class="modal-option-name">
-                        Sails · FastLink
-                        <span class="modal-option-password">fastlink.sails.qxwkstudio.top</span>
-                    </div>
-                    <div class="modal-option-info">异闪 FastLink：新一代全能网络协议</div>
-                </a>
-                <a href="https://mnmcp.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
-                    <div class="modal-option-name">
-                        Sails · MnMcP
-                        <span class="modal-option-password">mnmcp.sails.qxwkstudio.top</span>
-                    </div>
-                    <div class="modal-option-info">Minecraft ↔ MiniWorld 互联</div>
-                </a>
-                <a href="https://blockconnect.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
-                    <div class="modal-option-name">
-                        Sails · BlockConnect
-                        <span class="modal-option-password">blockconnect.sails.qxwkstudio.top</span>
-                    </div>
-                    <div class="modal-option-info">世界联结 BlockConnect：Connect the Worlds, Enjoy with Players.</div>
-                </a>
-                <a href="https://hpbi.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
-                    <div class="modal-option-name">
-                        Sails · HPBI
-                        <span class="modal-option-password">hpbi.sails.qxwkstudio.top</span>
-                    </div>
-                    <div class="modal-option-info">人类生产力助推计划 HPBI: 人工智能赋能生产力提升工具</div>
-                </a>
-                <a href="https://oxygenai.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
-                    <div class="modal-option-name">
-                        Sails · Oxygen AI
-                        <span class="modal-option-password">oxygenai.sails.qxwkstudio.top</span>
-                    </div>
-                    <div class="modal-option-info">源氧 Oxygen AI Lab: 人工智能实验室</div>
+                    <div class="modal-option-info">企业邮箱服务，跳转至阿里云企业邮箱管理平台</div>
                 </a>
             </div>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多子域名站点正在筹备中，敬请期待~</p>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多子域名陆续上线中……</p>
             <button class="modal-close" onclick="closeDomainNavModal()">关闭</button>
         </div>
     </div>
 
-    <!-- ========= 友情链接弹窗 (网址标签同样支持换行，样式与域名导航一致) ========= -->
+    <!-- 外部项目弹窗（合作伙伴子项目） -->
+    <div class="modal-overlay" id="externalProjectsModal">
+        <div class="modal-dialog modal-scroll-area">
+            <h3>🚀 外部项目</h3>
+            <p class="modal-subtitle">合作伙伴与子项目精选</p>
+            <div class="modal-options">
+                <a href="https://home.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">Sails · 个人主页</div>
+                    <div class="modal-option-info">StarsailsClover的个人主页，汇聚项目与动态</div>
+                </a>
+                <a href="https://fastlink.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">Sails · FastLink</div>
+                    <div class="modal-option-info">异闪 FastLink：新一代全能网络协议</div>
+                </a>
+                <a href="https://mnmcp.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">Sails · MnMcP</div>
+                    <div class="modal-option-info">Minecraft ↔ MiniWorld 互联</div>
+                </a>
+                <a href="https://blockconnect.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">Sails · BlockConnect</div>
+                    <div class="modal-option-info">世界联结 BlockConnect：Connect the Worlds, Enjoy with Players.</div>
+                </a>
+                <a href="https://hpbi.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">Sails · HPBI</div>
+                    <div class="modal-option-info">人类生产力助推计划 HPBI: 人工智能赋能生产力提升工具</div>
+                </a>
+                <a href="https://oxygenai.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
+                    <div class="modal-option-name">Sails · Oxygen AI</div>
+                    <div class="modal-option-info">源氧 Oxygen AI Lab: 人工智能实验室</div>
+                </a>
+            </div>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多外部项目持续更新中……</p>
+            <button class="modal-close" onclick="closeExternalProjectsModal()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 友情链接弹窗 -->
     <div class="modal-overlay" id="friendLinksModal">
         <div class="modal-dialog">
             <h3>🔗 友情链接</h3>
@@ -824,21 +849,17 @@
             <div class="modal-options">
                 <a href="https://github.com/StarsailsClover" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
-                        <span>StarsailsClover · GitHub</span>
+                        StarsailsClover · GitHub
                         <span class="modal-option-password">github.com/StarsailsClover</span>
                     </div>
-                    <div class="modal-option-info">
-                        <span>很多高级的项目，反正就是很厉害的一个人</span>
-                    </div>
+                    <div class="modal-option-info">很多高级的项目，反正就是很厉害的一个人</div>
                 </a>
                 <a href="https://www.vilinko.com/" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
-                        <span>Vilinko 官方站</span>
+                        Vilinko 官方站
                         <span class="modal-option-password">vilinko.com</span>
                     </div>
-                    <div class="modal-option-info">
-                        <span>Vertillusion Studio可爱系工作室，开发了很多可爱的项目</span>
-                    </div>
+                    <div class="modal-option-info">Vertillusion Studio可爱系工作室，开发了很多可爱的项目</div>
                 </a>
             </div>
             <button class="modal-close" onclick="closeFriendLinksModal()">关闭</button>
@@ -846,14 +867,12 @@
     </div>
 
     <script>
-        // 一言 API —— 失败时显示专属暖心句子
+        // 获取一言（hitokoto）并展示在首页
         async function fetchSaying() {
             const sayingText = document.getElementById('sayingText');
             const sayingMeta = document.getElementById('sayingMeta');
-            
             const fallbackText = "我喜欢你，仅你可见。";
             const fallbackAuthor = "——猫猫";
-            
             try {
                 const response = await fetch('https://v1.hitokoto.cn/');
                 if (!response.ok) throw new Error('请求失败');
@@ -866,15 +885,13 @@
                     sayingMeta.textContent = fallbackAuthor;
                 }
             } catch (error) {
-                console.warn('一言加载失败，使用默认暖心句子', error);
                 sayingText.textContent = fallbackText;
                 sayingMeta.textContent = fallbackAuthor;
             }
         }
-        
         fetchSaying();
 
-        // 背景降级
+        // 背景图片加载失败时的降级方案
         const bgImage = document.getElementById('bgImage');
         if (bgImage) {
             bgImage.addEventListener('error', function() {
@@ -882,55 +899,75 @@
             });
         }
 
+        // 滚动指示器：点击平滑滚动至资源中心
         const scrollIndicator = document.querySelector('.scroll-indicator');
         if (scrollIndicator) {
             scrollIndicator.addEventListener('click', function() {
-                const target = document.getElementById('functions-section');
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('resources-section')?.scrollIntoView({ behavior: 'smooth' });
             });
         }
 
-        // 弹窗控制函数
+        // 以下为各弹窗的开启/关闭控制函数
         function openDownloadModal() {
-            const modal = document.getElementById('downloadModal');
-            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+            document.getElementById('downloadModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
         function closeDownloadModal() {
-            const modal = document.getElementById('downloadModal');
-            if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
+            document.getElementById('downloadModal').classList.remove('active');
+            document.body.style.overflow = '';
         }
         function openDomainNavModal() {
-            const modal = document.getElementById('domainNavModal');
-            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+            document.getElementById('domainNavModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
         function closeDomainNavModal() {
-            const modal = document.getElementById('domainNavModal');
-            if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
+            document.getElementById('domainNavModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function openExternalProjectsModal() {
+            document.getElementById('externalProjectsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeExternalProjectsModal() {
+            document.getElementById('externalProjectsModal').classList.remove('active');
+            document.body.style.overflow = '';
         }
         function openFriendLinksModal() {
-            const modal = document.getElementById('friendLinksModal');
-            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+            document.getElementById('friendLinksModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
         function closeFriendLinksModal() {
-            const modal = document.getElementById('friendLinksModal');
-            if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
+            document.getElementById('friendLinksModal').classList.remove('active');
+            document.body.style.overflow = '';
         }
 
-        // 遮罩层关闭
-        document.getElementById('downloadModal')?.addEventListener('click', function(e) { if (e.target === this) closeDownloadModal(); });
-        document.getElementById('domainNavModal')?.addEventListener('click', function(e) { if (e.target === this) closeDomainNavModal(); });
-        document.getElementById('friendLinksModal')?.addEventListener('click', function(e) { if (e.target === this) closeFriendLinksModal(); });
-        
+        // 点击弹窗遮罩层关闭对应弹窗
+        const modals = ['downloadModal', 'domainNavModal', 'externalProjectsModal', 'friendLinksModal'];
+        modals.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        if (id === 'downloadModal') closeDownloadModal();
+                        if (id === 'domainNavModal') closeDomainNavModal();
+                        if (id === 'externalProjectsModal') closeExternalProjectsModal();
+                        if (id === 'friendLinksModal') closeFriendLinksModal();
+                    }
+                });
+            }
+        });
+
         // ESC 键关闭所有弹窗
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeDownloadModal();
                 closeDomainNavModal();
+                closeExternalProjectsModal();
                 closeFriendLinksModal();
             }
         });
 
-        // 品牌回到顶部
+        // 点击品牌 Logo 平滑回到顶部
         const brandLink = document.getElementById('homeTopLink');
         if (brandLink) {
             brandLink.addEventListener('click', (e) => {
@@ -939,7 +976,7 @@
             });
         }
 
-        // 滚动时加强毛玻璃质感
+        // 滚动时改变顶栏背景透明度与模糊强度
         const navbar = document.querySelector('.top-navbar');
         if (navbar) {
             window.addEventListener('scroll', () => {
@@ -951,6 +988,29 @@
                     navbar.style.backdropFilter = 'blur(14px)';
                 }
             });
+        }
+
+        // 汉堡菜单交互：展开/关闭，点击菜单项后自动关闭并滚动到对应区块
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menuPanel = document.getElementById('menuPanel');
+        const menuLinks = document.querySelectorAll('.menu-link');
+        function closeMenu() { menuPanel.classList.remove('active'); }
+        function toggleMenu(e) { e.stopPropagation(); menuPanel.classList.toggle('active'); }
+        function handleMenuClick(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId !== '#') {
+                e.preventDefault();
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) { targetEl.scrollIntoView({ behavior: 'smooth' }); closeMenu(); }
+            }
+        }
+        if (hamburgerBtn && menuPanel) {
+            hamburgerBtn.addEventListener('click', toggleMenu);
+            document.addEventListener('click', function(event) {
+                if (!menuPanel.contains(event.target) && !hamburgerBtn.contains(event.target)) closeMenu();
+            });
+            window.addEventListener('scroll', () => { if (menuPanel.classList.contains('active')) closeMenu(); });
+            menuLinks.forEach(link => link.addEventListener('click', handleMenuClick));
         }
     </script>
 </body>

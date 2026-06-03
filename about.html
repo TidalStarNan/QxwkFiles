@@ -148,6 +148,41 @@
                 font-size: 0.85rem;
             }
         }
+
+        /* ---- 新增：针对“关于工作室”卡片垂直布局，让按钮显示在文字下方 ---- */
+        .team-section:first-of-type .member-card.full-width {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: left;   /* 文本保持左对齐，美观 */
+        }
+
+        /* ---- 联系我们 按钮样式（玻璃质感，与整体风格完美融合）---- */
+        .contact-button {
+            display: table;          /* 配合 margin: auto 实现居中 */
+            margin: 20px auto 8px auto;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .contact-button:hover {
+            background: rgba(255, 255, 255, 0.45);
+            transform: scale(1.02);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        .contact-button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -165,6 +200,8 @@
             <div class="member-grid">
                 <div class="member-card full-width">
                     <div class="full-text">这个工作室很懒，什么也没有写。</div>
+                    <!-- 联系我们的按钮：点击直接发送邮件到 QxwkStudio@outlook.com (自动添加友好主题)  -->
+                    <a href="mailto:QxwkStudio@outlook.com?subject=咨询青翔未阔工作室" class="contact-button">📧 联系我们</a>
                 </div>
             </div>
         </div>
@@ -196,7 +233,7 @@
             { name: '心态不爱打牌', desc: '工作室联合创始人', avatar: 'https://weavatar.com/avatar/473bdd519211e37b2b31bd3231b81aa50ad8f5fdbc956d6087cc956f320f98be?s=400' },
             { name: '幻想繁星', desc: '工作室联合创始人', avatar: 'https://weavatar.com/avatar/0a258e851779fecdff48b0594af16eaaf280bbc06281bc4e35cd7e3e8a44068b?s=400' },
             { name: '阿江_233', desc: '首席指令师 & 建筑师', avatar: 'https://weavatar.com/avatar/e660bc25449e3cd818d29339cc66c6dd2c454bee03dd8c1f861d62e578f533ff?s=400' },
-            { name: 'SG', desc: '建筑师&技术支持', avatar: '' }
+            { name: 'AmargoLeaf', desc: '建筑师&技术支持', avatar: '' }
         ];
 
         const contribMembers = [
