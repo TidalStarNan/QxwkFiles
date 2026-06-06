@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>下载中心 · 文件列表</title>
     <link rel="icon" type="image/webp" href="/favicon.webp">
     <style>
@@ -215,6 +215,40 @@
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 150, 150, 0.5);
         }
+
+        /* ========== 新增样式：窄屏时表格可左右滑动，内容不截断 ========== */
+        /* 确保表格容器在窄屏出现横向滚动条，避免内容溢出或截断 */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* 提升移动端滑动体验 */
+        }
+        /* 取消固定表格布局，改用自动布局让内容自然撑开，不再压缩隐藏 */
+        .file-table {
+            table-layout: auto !important;
+            width: max-content;
+            min-width: 100%;
+        }
+        /* 所有表头与单元格内容强制不换行 (确保每列完整显示，横向滚动可见所有信息) */
+        .file-table th,
+        .file-table td {
+            white-space: nowrap !important;
+        }
+        /* 文件名原本有省略号截断，现在移除截断效果，完整显示，支持滚动查看长文件名 */
+        .file-name-text {
+            white-space: nowrap !important;
+            text-overflow: clip !important;
+            overflow: visible !important;
+            max-width: none;
+        }
+        /* 确保下载按钮在任何宽度下都不折行，保持完整按钮文案 */
+        .download-btn {
+            white-space: nowrap;
+        }
+        /* 小优化: 保持文件图标和文件名在同一基线，布局整洁 */
+        .file-name-cell {
+            flex-shrink: 0;
+        }
+        /* ========== 滚动适配结束，其余原有功能完全不变 ========== */
     </style>
 </head>
 <body>
@@ -226,7 +260,7 @@
             </div>
         </div>
         <div class="tabs" id="tabBar">
-            <button class="tab-btn active" data-path="mcpack-yz">📥滦平一中整合包下载</button>
+            <button class="tab-btn active" data-path="mcpack-yz">📥一中整合包下载</button>
             <button class="tab-btn" data-path="image-logo">🎨工作室Logo和壁纸下载</button>
         </div>
         <div class="current-path">
