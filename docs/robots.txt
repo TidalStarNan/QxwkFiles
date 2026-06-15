@@ -1,4 +1,5 @@
 User-agent: *
-Disallow: /
-Allow: /index.html
-Allow: /$
+Disallow: /error.html
+Disallow: /dictionary/*.json
+
+Sitemap: https://home.qxwkstudio.top/sitemap.xml
