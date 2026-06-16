@@ -7,551 +7,507 @@
     <meta name="description" content="青翔未阔工作室官方门户，提供资源下载、网站导航、外部项目推荐、友情链接、MC 服务器状态监测等一站式服务，并展示每日精选壁纸与一言语录。">
     <link rel="icon" type="image/webp" href="/favicon.webp">
     <style>
-        * {
+        /* ========= Reset & Base ========= */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --primary-subtle: rgba(37, 99, 235, 0.08);
+            --secondary: #0d9488;
+            --accent: #7c3aed;
+            --surface: #ffffff;
+            --bg: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
+            --navbar-bg: rgba(15, 23, 42, 0.75);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            --container: 1100px;
+            --nav-height: 64px;
+        }
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: 75px;
+            scroll-padding-top: var(--nav-height);
         }
-
-        /* 全局背景统一为 #f8fafc，底部页脚除外 */
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f8fafc;
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 分组区块滚动偏移（适配固定顶栏） */
-        #resources-section,
-        #site-nav-section,
-        #more-features-section {
-            scroll-margin-top: 75px;
-        }
-
-        /* ========= 固定顶栏 (毛玻璃效果) ========= */
-        .top-navbar {
+        /* ========= Navbar ========= */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
+            height: var(--nav-height);
             z-index: 1000;
-            background: rgba(10, 20, 30, 0.55);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: var(--navbar-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background var(--transition), box-shadow var(--transition);
         }
-
-        .navbar-container {
-            max-width: 1300px;
+        .navbar.scrolled {
+            background: rgba(15, 23, 42, 0.88);
+            box-shadow: 0 1px 12px rgba(0, 0, 0, 0.15);
+        }
+        .navbar-inner {
+            max-width: var(--container);
             margin: 0 auto;
-            padding: 0 28px;
+            padding: 0 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            min-height: 68px;
-            position: relative;
+            height: 100%;
         }
-
         .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
-            color: white;
+            color: #fff;
             font-weight: 600;
-            font-size: 1.35rem;
-            letter-spacing: 1.5px;
-            transition: opacity 0.2s;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
             flex-shrink: 0;
+            transition: opacity var(--transition);
         }
-        .navbar-brand:hover {
-            opacity: 0.85;
-        }
-        .brand-icon {
-            font-size: 1.6rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-        .brand-text {
-            background: linear-gradient(135deg, #FFFFFF, #e6f0ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            font-weight: 600;
-            white-space: nowrap;
-        }
+        .navbar-brand:hover { opacity: 0.85; }
+        .navbar-brand svg { flex-shrink: 0; }
 
-        /* ========= 汉堡菜单（移动端适配） ========= */
-        .hamburger-wrapper {
+        /* ========= Hamburger ========= */
+        .hamburger-wrap {
             position: relative;
             z-index: 1001;
         }
-        .hamburger-icon {
+        .hamburger {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 30px;
-            height: 24px;
+            width: 28px;
+            height: 22px;
             cursor: pointer;
-            background: transparent;
+            background: none;
             border: none;
             padding: 0;
-            transition: all 0.2s;
         }
-        .hamburger-icon span {
+        .hamburger span {
             display: block;
-            height: 3px;
+            height: 2.5px;
             width: 100%;
-            background-color: white;
-            border-radius: 6px;
-            transition: 0.2s;
+            background: #fff;
+            border-radius: 4px;
+            transition: var(--transition);
+            transform-origin: center;
         }
-        .hamburger-icon:hover span {
-            background-color: #90cdf4;
-        }
+        .hamburger:hover span { background: #93c5fd; }
         .menu-panel {
             position: absolute;
-            top: 60px;
+            top: 52px;
             right: 0;
-            background: rgba(15, 25, 35, 0.95);
+            background: rgba(15, 23, 42, 0.96);
             backdrop-filter: blur(16px);
-            border-radius: 20px;
-            padding: 12px 0;
-            min-width: 200px;
+            border-radius: var(--radius-md);
+            padding: 8px 0;
+            min-width: 190px;
             list-style: none;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-10px);
-            transition: opacity 0.2s ease, visibility 0.2s, transform 0.2s;
-            z-index: 1100;
+            transform: translateY(-8px) scale(0.97);
+            transition: opacity 0.2s ease, visibility 0.2s, transform 0.2s ease;
         }
         .menu-panel.active {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
-        .menu-panel li {
-            list-style: none;
-        }
+        .menu-panel li { list-style: none; }
         .menu-panel a {
-            display: block;
-            padding: 12px 24px;
-            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 22px;
+            color: #e2e8f0;
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 0.92rem;
             font-weight: 500;
-            transition: background 0.2s, color 0.2s;
-            white-space: nowrap;
-            letter-spacing: 0.5px;
+            transition: background var(--transition), color var(--transition);
         }
         .menu-panel a:hover {
-            background: rgba(59, 130, 246, 0.6);
-            color: white;
+            background: var(--primary-subtle);
+            color: #93c5fd;
         }
+        .menu-panel a svg { flex-shrink: 0; opacity: 0.7; }
 
-        /* 移动端样式微调 (全面优化手机尺寸) */
-        @media (max-width: 680px) {
-            .navbar-container {
-                padding: 0 16px;
-                min-height: 60px;
-            }
-            .navbar-brand {
-                font-size: 1.2rem;
-                gap: 6px;
-            }
-            .brand-icon {
-                font-size: 1.4rem;
-            }
-            .menu-panel {
-                top: 54px;
-                min-width: 170px;
-            }
-            .menu-panel a {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            html {
-                scroll-padding-top: 70px;
-            }
-            #resources-section,
-            #site-nav-section,
-            #more-features-section {
-                scroll-margin-top: 70px;
-            }
-
-            /* 减小卡片整体尺寸 */
-            .card {
-                padding: 20px 15px;
-            }
-            .card-icon {
-                font-size: 36px;
-                margin-bottom: 12px;
-            }
-            .card h3 {
-                font-size: 1.2rem;
-                margin-bottom: 6px;
-            }
-            .card p {
-                font-size: 0.85rem;
-            }
-
-            /* 分区标题缩小 */
-            .section h2 {
-                font-size: 1.6rem;
-                margin-bottom: 20px;
-            }
-
-            /* 网格间距减小 */
-            .grid {
-                gap: 18px;
-            }
-
-            /* 公告栏区域压缩 */
-            .announcement-section {
-                padding: 20px 16px;
-            }
-            .announcement-item {
-                padding: 12px 16px;
-                gap: 8px;
-                font-size: 0.9rem;
-            }
-            .announcement-date {
-                font-size: 0.75rem;
-                min-width: 70px;
-            }
-
-            /* 区块上下间距减小 */
-            .section {
-                padding: 30px 16px;
-                margin-bottom: 30px;
-            }
-
-            /* 弹窗内边距与字体调整 */
-            .modal-dialog {
-                padding: 25px 20px;
-            }
-            .modal-dialog h3 {
-                font-size: 1.4rem;
-            }
-            .modal-option {
-                padding: 14px 16px;
-            }
-            .modal-option-name {
-                font-size: 0.95rem;
-                gap: 6px 10px;
-            }
-            .modal-option-password {
-                font-size: 0.75rem;
-                padding: 2px 6px;
-            }
-            .modal-option-info {
-                font-size: 0.8rem;
-            }
-            .modal-close {
-                padding: 8px 22px;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* 全屏英雄区（每日壁纸背景） */
+        /* ========= Hero ========= */
         .hero {
             position: relative;
             width: 100%;
             height: 100vh;
             overflow: hidden;
-        }
-        .hero img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .hero-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            text-align: center;
-            color: white;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-            background: rgba(0, 0, 0, 0.4);
-            padding: 30px 50px;
-            border-radius: 12px;
-            backdrop-filter: blur(5px);
-            max-width: 700px;
-            width: 90%;
-            margin-top: 20px;
-        }
-        @media (max-width: 680px) {
-            .hero-overlay {
-                padding: 20px 24px;
-                width: 92%;
-                margin-top: 30px;
-            }
-            .hero-overlay h1 {
-                font-size: 2.4rem;
-            }
-            .hero-overlay .subtitle {
-                font-size: 1rem;
-            }
-            .saying-text {
-                font-size: 0.9rem;
-            }
-            .saying-meta {
-                font-size: 0.7rem;
-            }
-        }
-        .hero-overlay h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 4px;
-        }
-        .hero-overlay .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            opacity: 0.9;
-            font-weight: 400;
-            letter-spacing: 2px;
-        }
-        .saying-box {
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 1.1rem;
-            opacity: 0.95;
-            min-height: 50px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .hero-overlay {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: #fff;
+            max-width: 680px;
+            width: 90%;
+            padding: 40px 48px;
+        }
+        .hero-overlay h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            opacity: 0.9;
+            font-weight: 400;
+            letter-spacing: 3px;
+            margin-bottom: 28px;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+        }
+        .hero-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #60a5fa, var(--secondary));
+            border-radius: 4px;
+            margin: 0 auto 28px;
+        }
+        .saying-box {
+            position: relative;
+            padding: 24px 28px;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         .saying-text {
-            line-height: 1.6;
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+            line-height: 1.7;
             font-style: italic;
-            max-width: 600px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
         }
         .saying-meta {
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 0.8rem;
-            opacity: 0.7;
+            opacity: 0.65;
+        }
+        .saying-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .saying-loading .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            animation: dotPulse 1.2s ease-in-out infinite;
+        }
+        .saying-loading .dot:nth-child(2) { animation-delay: 0.2s; }
+        .saying-loading .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotPulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
         }
 
-        /* 滚动提示（引导用户向下） */
+        /* ========= Scroll Indicator ========= */
         .scroll-indicator {
             position: absolute;
-            bottom: 40px;
+            bottom: 36px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            color: white;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
-            animation: float 2s ease-in-out infinite;
+            gap: 6px;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+            animation: scrollBounce 2.4s ease-in-out infinite;
             cursor: pointer;
+            opacity: 0.75;
+            transition: opacity var(--transition);
             user-select: none;
         }
-        @media (max-width: 680px) {
-            .scroll-indicator span {
-                font-size: 0.8rem;
-            }
-            .scroll-arrow {
-                width: 20px;
-                height: 20px;
-            }
-        }
+        .scroll-indicator:hover { opacity: 1; }
         .scroll-indicator span {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             letter-spacing: 2px;
-            opacity: 0.85;
+            font-weight: 400;
         }
-        .scroll-arrow {
-            width: 24px;
-            height: 24px;
-            border-right: 2px solid white;
-            border-bottom: 2px solid white;
-            transform: rotate(45deg);
-            opacity: 0.85;
-        }
-        @keyframes float {
+        @keyframes scrollBounce {
             0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
+            50% { transform: translateX(-50%) translateY(8px); }
         }
 
-        /* 公告栏背景统一为 #f8fafc */
-        .announcement-section {
-            background: #f8fafc;
-            padding: 30px 20px;
-            border-bottom: 1px solid #e2e8f0;
+        /* ========= Announcement ========= */
+        .announcement {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 24px;
         }
-        .announcement-container {
-            max-width: 1000px;
+        .announcement-inner {
+            max-width: var(--container);
             margin: 0 auto;
-        }
-        .announcement-item {
-            background: #ffffff;
-            border-left: 4px solid #3b82f6;
-            padding: 16px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            color: #334155;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            gap: 14px;
+        }
+        .announcement-badge {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 40px;
         }
         .announcement-date {
-            font-size: 0.85rem;
-            color: #64748b;
-            white-space: nowrap;
+            flex-shrink: 0;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
             font-weight: 500;
-            min-width: 85px;
+            white-space: nowrap;
+        }
+        .announcement-text {
+            font-size: 0.92rem;
+            color: var(--text-primary);
+        }
+        .announcement-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), #ccfbf1);
         }
 
-        /* 通用内容区块样式，背景统一为 #f8fafc */
+        /* ========= Sections ========= */
         .section {
-            background: #f8fafc;
-            padding: 40px 20px;
-            margin-bottom: 40px;
+            padding: 64px 24px;
         }
-        .section:last-of-type {
-            margin-bottom: 0;
+        .section + .section {
+            padding-top: 0;
         }
-        .container {
-            max-width: 1000px;
+        .section-inner {
+            max-width: var(--container);
             margin: 0 auto;
         }
-        .section h2 {
-            font-size: 2rem;
-            color: #1e293b;
-            margin-bottom: 30px;
+        .section-header {
             text-align: center;
+            margin-bottom: 44px;
         }
+        .section-header h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .section-header p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ========= Cards Grid ========= */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            margin-bottom: 20px;
+            gap: 24px;
         }
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 30px 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 32px 24px;
+            box-shadow: var(--shadow-sm);
             text-align: center;
-            transition: all 0.2s;
             text-decoration: none;
-            color: #1e293b;
-            display: block;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid var(--border);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            outline: none;
+        }
+        .card:focus-visible {
+            box-shadow: 0 0 0 3px var(--primary);
+            border-color: var(--primary);
         }
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(37, 99, 235, 0.2);
         }
         .card-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+            width: 52px; height: 52px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            transition: background var(--transition);
+            flex-shrink: 0;
         }
+        .card-icon.blue { background: #dbeafe; }
+        .card-icon.teal { background: #ccfbf1; }
+        .card-icon.violet { background: #ede9fe; }
+        .card-icon.emerald { background: #d1fae5; }
+        .card-icon.amber { background: #fef3c7; }
+        .card-icon.rose { background: #ffe4e6; }
+        .card-icon.indigo { background: #e0e7ff; }
+        .card-icon.cyan { background: #cffafe; }
+        .card-icon.orange { background: #ffedd5; }
         .card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
+            font-size: 1.12rem;
+            font-weight: 600;
+            margin-bottom: 2px;
         }
         .card p {
-            color: #64748b;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .card-arrow {
+            margin-top: 12px;
+            opacity: 0.35;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            transform: translateX(-4px);
+        }
+        .card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
         }
 
-        /* 底部页脚保持黑色 #111111 */
+        /* ========= Footer ========= */
         .footer {
+            background: #0f172a;
             text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-            font-size: 14px;
-            background: #111111;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 24px 32px;
+            color: var(--text-tertiary);
+            font-size: 0.84rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
-        .footer .visitor-counter img {
-            filter: brightness(0.9);
+        .footer-counter {
+            margin-bottom: 12px;
+        }
+        .footer-counter img {
             max-width: 100%;
             height: auto;
+            border-radius: 6px;
+            filter: brightness(0.85);
+        }
+        .footer-copy {
+            opacity: 0.6;
         }
 
-        /* 弹窗（模态框）通用样式 */
+        /* ========= Modals ========= */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.65);
-            z-index: 1100;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(3px);
+            padding: 20px;
+            animation: modalFadeIn 0.2s ease;
         }
-        .modal-overlay.active {
-            display: flex;
+        .modal-overlay.active { display: flex; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .modal-dialog {
-            background: white;
-            border-radius: 24px;
-            padding: 35px 30px;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            width: 100%;
             max-width: min(90vw, 560px);
-            width: 90%;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            text-align: center;
             max-height: 85vh;
             overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            animation: modalSlideIn 0.25s ease;
         }
-        @media (min-width: 640px) {
-            .modal-dialog { max-width: min(85vw, 680px); }
-        }
-        @media (min-width: 1024px) {
-            .modal-dialog { max-width: min(75vw, 800px); }
+        @keyframes modalSlideIn {
+            from { transform: translateY(16px) scale(0.97); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
         }
         .modal-dialog h3 {
-            font-size: 1.6rem;
-            margin-bottom: 10px;
-            color: #1e293b;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
         }
-        .modal-dialog .modal-subtitle {
-            font-size: 0.95rem;
-            color: #64748b;
-            margin-bottom: 25px;
+        .modal-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
         }
         .modal-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
         .modal-option {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 18px 20px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all var(--transition);
             text-align: left;
             text-decoration: none;
-            color: #1e293b;
+            color: var(--text-primary);
             display: block;
+            outline: none;
+        }
+        .modal-option:focus-visible {
+            box-shadow: 0 0 0 3px var(--primary);
         }
         .modal-option:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
-            transform: translateY(-2px);
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-1px);
         }
         .modal-option-name {
             display: flex;
@@ -559,207 +515,317 @@
             align-items: baseline;
             gap: 8px 12px;
             font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: 6px;
-            white-space: normal;
+            font-size: 1rem;
+            margin-bottom: 4px;
         }
         .modal-option-password {
             background: #fef3c7;
             color: #92400e;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 6px;
             font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
-            display: inline-block;
-            white-space: normal;
             word-break: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
         }
         .modal-option-info {
-            font-size: 0.85rem;
-            color: #64748b;
+            font-size: 0.83rem;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .modal-close {
-            margin-top: 24px;
-            padding: 10px 28px;
-            background: #e2e8f0;
-            border: none;
-            border-radius: 40px;
+            margin-top: 22px;
+            width: 100%;
+            padding: 10px 0;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.95rem;
-            color: #475569;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all var(--transition);
         }
         .modal-close:hover {
-            background: #cbd5e1;
+            background: var(--border);
+            color: var(--text-primary);
         }
-        .modal-scroll-area {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        .modal-footer-note {
+            font-size: 0.78rem;
+            color: var(--text-tertiary);
+            margin-top: 16px;
+            text-align: center;
         }
-        .modal-scroll-area .modal-options {
-            flex: 1;
-            overflow-y: auto;
-            margin: 16px 0 8px 0;
-            padding-right: 6px;
-            scrollbar-width: thin;
+
+        /* ========= Scroll Animations ========= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
-        @media (max-width: 550px) {
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* ========= Responsive ========= */
+        @media (max-width: 768px) {
+            :root { --container: 100%; }
+            .section { padding: 44px 18px; }
+            .section-header { margin-bottom: 32px; }
+            .navbar-inner { padding: 0 16px; }
+            .hero-overlay { padding: 28px 20px; }
+            .hero-overlay h1 { letter-spacing: 1px; }
+            .hero-divider { margin-bottom: 20px; }
+            .saying-box { padding: 18px 16px; }
+            .grid { gap: 16px; }
+            .card { padding: 24px 18px; }
+            .card-icon { width: 46px; height: 46px; }
+            .card-icon svg { width: 22px; height: 22px; }
+            .card h3 { font-size: 1.05rem; }
+            .announcement { padding: 14px 16px; }
+            .announcement-inner { flex-wrap: wrap; gap: 8px; }
+            .announcement-text { font-size: 0.85rem; }
             .modal-dialog {
-                padding: 28px 20px;
+                padding: 28px 22px;
+                max-width: 95vw;
+                border-radius: var(--radius-md);
             }
-            .modal-option-name {
-                flex-wrap: wrap;
-                gap: 8px 8px;
-            }
+            .menu-panel { min-width: 170px; }
+            .menu-panel a { padding: 10px 18px; font-size: 0.88rem; }
         }
-        .visitor-counter img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
+        @media (max-width: 480px) {
+            .section { padding: 32px 14px; }
+            .grid { grid-template-columns: 1fr; gap: 14px; }
+            .section-header { margin-bottom: 24px; }
+            .section-header h2 { font-size: 1.3rem; }
+            .hero-overlay { padding: 20px 14px; width: 94%; }
+            .saying-box { padding: 14px 12px; }
+            .scroll-indicator { bottom: 24px; }
+            .navbar-brand { font-size: 1.05rem; }
+            .navbar-brand svg { width: 26px; height: 26px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+            .reveal { opacity: 1; transform: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 固定顶栏：毛玻璃导航+汉堡菜单 -->
-    <header class="top-navbar">
-        <div class="navbar-container">
+    <!-- ===== Navbar ===== -->
+    <header class="navbar" id="navbar">
+        <div class="navbar-inner">
             <a href="#" class="navbar-brand" id="homeTopLink">
-                <span class="brand-icon">▱</span>
-                <span class="brand-text">青翔未阔工作室</span>
+                <img src="/favicon.webp" alt="青翔未阔工作室" width="30" height="30" style="border-radius:6px; flex-shrink:0;">
+                <span>青翔未阔工作室</span>
             </a>
-            <div class="hamburger-wrapper">
-                <button class="hamburger-icon" id="hamburgerBtn" aria-label="菜单">
+            <div class="hamburger-wrap">
+                <button class="hamburger" id="hamburgerBtn" aria-label="菜单">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
                 <ul class="menu-panel" id="menuPanel">
-                    <li><a href="#resources-section" class="menu-link">资源中心</a></li>
-                    <li><a href="#site-nav-section" class="menu-link">网站导航</a></li>
-                    <li><a href="#more-features-section" class="menu-link">更多功能</a></li>
+                    <li><a href="#resources-section" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        资源中心
+                    </a></li>
+                    <li><a href="#site-nav-section" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        网站导航
+                    </a></li>
+                    <li><a href="#more-features-section" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        更多功能
+                    </a></li>
                 </ul>
             </div>
         </div>
     </header>
 
-    <!-- 全屏英雄区（必应每日壁纸 + 一言） -->
+    <!-- ===== Hero ===== -->
     <div class="hero">
-        <img src="https://uapis.cn/api/v1/image/bing-daily?resolution=1080" alt="必应每日壁纸" id="bgImage">
+        <img class="hero-bg" src="https://uapis.cn/api/v1/image/bing-daily?resolution=1080" alt="每日壁纸" id="bgImage">
         <div class="hero-overlay">
             <h1>欢迎访问</h1>
-            <p class="subtitle">青翔未阔工作室官网</p>
+            <p class="hero-subtitle">青翔未阔工作室官网</p>
+            <div class="hero-divider"></div>
             <div class="saying-box">
-                <div class="saying-text" id="sayingText">✨ 正在加载一言...</div>
+                <div class="saying-text" id="sayingText">
+                    <span class="saying-loading">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </span>
+                </div>
                 <div class="saying-meta" id="sayingMeta"></div>
             </div>
         </div>
-        <div class="scroll-indicator" title="向下滚动查看资源中心">
+        <div class="scroll-indicator" title="向下滚动">
             <span>向下滚动</span>
-            <div class="scroll-arrow"></div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
         </div>
     </div>
 
-    <!-- 公告栏 -->
-    <div class="announcement-section">
-        <div class="announcement-container">
-            <div class="announcement-item">
-                <span class="announcement-date">2026-06-01</span>
-                <span class="announcement-content">欢迎访问全新的 qxwkstudio.top 域名，旧域名已弃用，请及时更换书签</span>
+    <!-- ===== Announcement ===== -->
+    <div class="announcement">
+        <div class="announcement-inner">
+            <div class="announcement-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             </div>
+            <span class="announcement-badge">公告</span>
+            <span class="announcement-date">2026-06-01</span>
+            <span class="announcement-text">欢迎访问全新的 qxwkstudio.top 域名，旧域名已弃用，请及时更换书签</span>
         </div>
     </div>
 
-    <!-- 资源中心模块 -->
+    <!-- ===== 资源中心 ===== -->
     <div class="section" id="resources-section">
-        <div class="container">
-            <h2>📦 资源中心</h2>
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2>资源中心</h2>
+                <p>下载客户端、查阅辞典，一站式获取工作室资源</p>
+            </div>
             <div class="grid">
-                <a href="download.html" class="card">
-                    <div class="card-icon">📥</div>
+                <a href="download.html" class="card reveal reveal-delay-1">
+                    <div class="card-icon blue">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </div>
                     <h3>站内下载</h3>
                     <p>GitHub 下载，失败请尝试站外下载</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
-                <a href="javascript:void(0)" class="card" onclick="openDownloadModal()">
-                    <div class="card-icon">☁️</div>
+                <a href="javascript:void(0)" class="card reveal reveal-delay-2" onclick="openDownloadModal()">
+                    <div class="card-icon teal">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    </div>
                     <h3>站外下载</h3>
                     <p>蓝奏云备用下载</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
-                <a href="dictionary/dictionary.html" class="card">
-                    <div class="card-icon">📖</div>
+                <a href="dictionary/dictionary.html" class="card reveal reveal-delay-3">
+                    <div class="card-icon violet">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M12 6v7"/><path d="M9 9h6"/></svg>
+                    </div>
                     <h3>一中大辞典</h3>
                     <p>回首高中三年的欢乐点滴</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- 网站导航模块（域名导航/外部项目/友情链接） -->
+    <!-- ===== 网站导航 ===== -->
     <div class="section" id="site-nav-section">
-        <div class="container">
-            <h2>🧭 网站导航</h2>
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2>网站导航</h2>
+                <p>发现更多站点与合作伙伴</p>
+            </div>
             <div class="grid">
-                <a href="javascript:void(0)" class="card" onclick="openDomainNavModal()">
-                    <div class="card-icon">🌐</div>
+                <a href="javascript:void(0)" class="card reveal reveal-delay-1" onclick="openDomainNavModal()">
+                    <div class="card-icon emerald">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
                     <h3>域名导航</h3>
                     <p>导航至其他子域名站点</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
-                <a href="javascript:void(0)" class="card" onclick="openExternalProjectsModal()">
-                    <div class="card-icon">🚀</div>
+                <a href="javascript:void(0)" class="card reveal reveal-delay-2" onclick="openExternalProjectsModal()">
+                    <div class="card-icon amber">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </div>
                     <h3>外部项目</h3>
                     <p>发现来自合作伙伴的酷炫项目</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
-                <a href="javascript:void(0)" class="card" onclick="openFriendLinksModal()">
-                    <div class="card-icon">🔗</div>
+                <a href="javascript:void(0)" class="card reveal reveal-delay-3" onclick="openFriendLinksModal()">
+                    <div class="card-icon rose">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
                     <h3>友情链接</h3>
                     <p>通往其他有趣网站的链接</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- 更多功能模块 -->
+    <!-- ===== 更多功能 ===== -->
     <div class="section" id="more-features-section">
-        <div class="container">
-            <h2>⚙️ 更多功能</h2>
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2>更多功能</h2>
+                <p>探索工作室提供的更多服务</p>
+            </div>
             <div class="grid">
-                <a href="mc-status.html" class="card">
-                    <div class="card-icon">🎮</div>
+                <a href="mc-status.html" class="card reveal reveal-delay-1">
+                    <div class="card-icon indigo">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+                    </div>
                     <h3>MC 状态监测</h3>
                     <p>实时查看服务器状态</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
-                <a href="about.html" class="card">
-                    <div class="card-icon">ℹ️</div>
+                <a href="about.html" class="card reveal reveal-delay-2">
+                    <div class="card-icon cyan">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </div>
                     <h3>关于我们</h3>
                     <p>了解工作室的故事</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
-                <a href="error.html" class="card">
-                    <div class="card-icon">🛠️</div>
-                    <h3>更多功能</h3>
+                <a href="error.html" class="card reveal reveal-delay-3">
+                    <div class="card-icon orange">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    </div>
+                    <h3>更多工具</h3>
                     <p>更多工具即将上线</p>
+                    <span class="card-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- 页脚区域：访客计数器 + 版权（黑色背景保持） -->
-    <div class="footer">
-        <div class="visitor-counter">
-            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC" 
+    <!-- ===== Footer ===== -->
+    <footer class="footer">
+        <div class="footer-counter">
+            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ftidalstarnan.github.io%2FQxwkFiles&label=%E4%BB%8A%E6%97%A5%E8%AE%BF%E9%97%AE%E9%87%8F%2F%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F&icon=github&color=%2320c997&message=&style=for-the-badge&tz=ROC"
                  alt="访客计数器"
                  onerror="this.alt='计数器暂时不可用'; this.style.opacity='0.6';">
         </div>
-        &copy; 2026 青翔未阔工作室
-    </div>
+        <div class="footer-copy">&copy; 2026 青翔未阔工作室</div>
+    </footer>
 
-    <!-- 站外下载弹窗（蓝奏云） -->
+    <!-- ===== Modal: 站外下载 ===== -->
     <div class="modal-overlay" id="downloadModal">
         <div class="modal-dialog">
             <h3>选择下载内容</h3>
@@ -778,10 +844,10 @@
         </div>
     </div>
 
-    <!-- 域名导航弹窗（主站 + 邮箱站） -->
+    <!-- ===== Modal: 域名导航 ===== -->
     <div class="modal-overlay" id="domainNavModal">
-        <div class="modal-dialog modal-scroll-area">
-            <h3>🌐 域名导航</h3>
+        <div class="modal-dialog">
+            <h3>域名导航</h3>
             <p class="modal-subtitle">官方主站与核心域名</p>
             <div class="modal-options">
                 <a href="https://home.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
@@ -791,7 +857,6 @@
                     </div>
                     <div class="modal-option-info">全新官网域名，聚合工作室动态</div>
                 </a>
-                <!-- 企业邮箱站，跳转至阿里云企业邮箱 -->
                 <a href="https://qiye.aliyun.com" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">
                         青翔未阔 · 邮箱站
@@ -800,15 +865,15 @@
                     <div class="modal-option-info">企业邮箱服务，跳转至阿里云企业邮箱管理平台</div>
                 </a>
             </div>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多子域名陆续上线中……</p>
+            <p class="modal-footer-note">更多子域名陆续上线中……</p>
             <button class="modal-close" onclick="closeDomainNavModal()">关闭</button>
         </div>
     </div>
 
-    <!-- 外部项目弹窗（合作伙伴子项目） -->
+    <!-- ===== Modal: 外部项目 ===== -->
     <div class="modal-overlay" id="externalProjectsModal">
-        <div class="modal-dialog modal-scroll-area">
-            <h3>🚀 外部项目</h3>
+        <div class="modal-dialog">
+            <h3>外部项目</h3>
             <p class="modal-subtitle">合作伙伴与子项目精选</p>
             <div class="modal-options">
                 <a href="https://home.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
@@ -829,22 +894,22 @@
                 </a>
                 <a href="https://hpbi.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">Sails · HPBI</div>
-                    <div class="modal-option-info">人类生产力助推计划 HPBI: 人工智能赋能生产力提升工具</div>
+                    <div class="modal-option-info">人类生产力助推计划 HPBI：人工智能赋能生产力提升工具</div>
                 </a>
                 <a href="https://oxygenai.sails.qxwkstudio.top" target="_blank" rel="noopener noreferrer" class="modal-option">
                     <div class="modal-option-name">Sails · Oxygen AI</div>
-                    <div class="modal-option-info">源氧 Oxygen AI Lab: 人工智能实验室</div>
+                    <div class="modal-option-info">源氧 Oxygen AI Lab：人工智能实验室</div>
                 </a>
             </div>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 16px;">更多外部项目持续更新中……</p>
+            <p class="modal-footer-note">更多外部项目持续更新中……</p>
             <button class="modal-close" onclick="closeExternalProjectsModal()">关闭</button>
         </div>
     </div>
 
-    <!-- 友情链接弹窗 -->
+    <!-- ===== Modal: 友情链接 ===== -->
     <div class="modal-overlay" id="friendLinksModal">
         <div class="modal-dialog">
-            <h3>🔗 友情链接</h3>
+            <h3>友情链接</h3>
             <p class="modal-subtitle">通往其他有趣网站和个人主页的链接</p>
             <div class="modal-options">
                 <a href="https://github.com/StarsailsClover" target="_blank" rel="noopener noreferrer" class="modal-option">
@@ -859,7 +924,7 @@
                         Vilinko 官方站
                         <span class="modal-option-password">vilinko.com</span>
                     </div>
-                    <div class="modal-option-info">Vertillusion Studio可爱系工作室，开发了很多可爱的项目</div>
+                    <div class="modal-option-info">Vertillusion Studio 可爱系工作室，开发了很多可爱的项目</div>
                 </a>
             </div>
             <button class="modal-close" onclick="closeFriendLinksModal()">关闭</button>
@@ -867,150 +932,135 @@
     </div>
 
     <script>
-        // 获取一言（hitokoto）并展示在首页
+        // ===== 一言 =====
         async function fetchSaying() {
-            const sayingText = document.getElementById('sayingText');
-            const sayingMeta = document.getElementById('sayingMeta');
-            const fallbackText = "我喜欢你，仅你可见。";
-            const fallbackAuthor = "——猫猫";
+            const el = document.getElementById('sayingText');
+            const meta = document.getElementById('sayingMeta');
+            const fallbackText = '我喜欢你，仅你可见。';
+            const fallbackAuthor = '——猫猫';
             try {
-                const response = await fetch('https://v1.hitokoto.cn/');
-                if (!response.ok) throw new Error('请求失败');
-                const data = await response.json();
-                if (data && data.hitokoto && typeof data.hitokoto === 'string' && data.hitokoto.trim() !== '') {
-                    sayingText.textContent = data.hitokoto;
-                    sayingMeta.textContent = '—— ' + (data.from || '一言');
+                const res = await fetch('https://v1.hitokoto.cn/');
+                if (!res.ok) throw new Error('请求失败');
+                const data = await res.json();
+                if (data && data.hitokoto && typeof data.hitokoto === 'string' && data.hitokoto.trim()) {
+                    el.textContent = data.hitokoto;
+                    meta.textContent = '—— ' + (data.from || '一言');
                 } else {
-                    sayingText.textContent = fallbackText;
-                    sayingMeta.textContent = fallbackAuthor;
+                    el.textContent = fallbackText;
+                    meta.textContent = fallbackAuthor;
                 }
-            } catch (error) {
-                sayingText.textContent = fallbackText;
-                sayingMeta.textContent = fallbackAuthor;
+            } catch {
+                el.textContent = fallbackText;
+                meta.textContent = fallbackAuthor;
             }
         }
         fetchSaying();
 
-        // 背景图片加载失败时的降级方案
-        const bgImage = document.getElementById('bgImage');
-        if (bgImage) {
-            bgImage.addEventListener('error', function() {
-                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080"%3E%3Crect fill="%23222" width="1920" height="1080"/%3E%3Ctext fill="white" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E壁纸加载失败%3C/text%3E%3C/svg%3E';
-            });
-        }
-
-        // 滚动指示器：点击平滑滚动至资源中心
-        const scrollIndicator = document.querySelector('.scroll-indicator');
-        if (scrollIndicator) {
-            scrollIndicator.addEventListener('click', function() {
-                document.getElementById('resources-section')?.scrollIntoView({ behavior: 'smooth' });
-            });
-        }
-
-        // 以下为各弹窗的开启/关闭控制函数
-        function openDownloadModal() {
-            document.getElementById('downloadModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeDownloadModal() {
-            document.getElementById('downloadModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        function openDomainNavModal() {
-            document.getElementById('domainNavModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeDomainNavModal() {
-            document.getElementById('domainNavModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        function openExternalProjectsModal() {
-            document.getElementById('externalProjectsModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeExternalProjectsModal() {
-            document.getElementById('externalProjectsModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        function openFriendLinksModal() {
-            document.getElementById('friendLinksModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeFriendLinksModal() {
-            document.getElementById('friendLinksModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // 点击弹窗遮罩层关闭对应弹窗
-        const modals = ['downloadModal', 'domainNavModal', 'externalProjectsModal', 'friendLinksModal'];
-        modals.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        if (id === 'downloadModal') closeDownloadModal();
-                        if (id === 'domainNavModal') closeDomainNavModal();
-                        if (id === 'externalProjectsModal') closeExternalProjectsModal();
-                        if (id === 'friendLinksModal') closeFriendLinksModal();
-                    }
-                });
-            }
+        // ===== Hero background fallback =====
+        document.getElementById('bgImage')?.addEventListener('error', function() {
+            this.src = 'data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%221920%22 height%3D%221080%22%3E%3Crect fill%3D%22%230f172a%22 width%3D%221920%22 height%3D%221080%22%2F%3E%3C%2Fsvg%3E';
         });
 
-        // ESC 键关闭所有弹窗
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeDownloadModal();
-                closeDomainNavModal();
-                closeExternalProjectsModal();
-                closeFriendLinksModal();
-            }
-        });
-
-        // 点击品牌 Logo 平滑回到顶部
-        const brandLink = document.getElementById('homeTopLink');
-        if (brandLink) {
-            brandLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-
-        // 滚动时改变顶栏背景透明度与模糊强度
-        const navbar = document.querySelector('.top-navbar');
-        if (navbar) {
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 30) {
-                    navbar.style.background = 'rgba(8, 18, 26, 0.7)';
-                    navbar.style.backdropFilter = 'blur(16px)';
-                } else {
-                    navbar.style.background = 'rgba(10, 20, 30, 0.55)';
-                    navbar.style.backdropFilter = 'blur(14px)';
+        // ===== Scroll Reveal =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
                 }
             });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ===== Navbar scroll effect =====
+        const navbar = document.getElementById('navbar');
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    navbar.classList.toggle('scrolled', window.scrollY > 40);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // ===== Brand link scroll to top =====
+        document.getElementById('homeTopLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== Scroll indicator =====
+        document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
+            document.getElementById('resources-section')?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ===== Modal controls =====
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
         }
 
-        // 汉堡菜单交互：展开/关闭，点击菜单项后自动关闭并滚动到对应区块
+        function openDownloadModal() { openModal('downloadModal'); }
+        function closeDownloadModal() { closeModal('downloadModal'); }
+        function openDomainNavModal() { openModal('domainNavModal'); }
+        function closeDomainNavModal() { closeModal('domainNavModal'); }
+        function openExternalProjectsModal() { openModal('externalProjectsModal'); }
+        function closeExternalProjectsModal() { closeModal('externalProjectsModal'); }
+        function openFriendLinksModal() { openModal('friendLinksModal'); }
+        function closeFriendLinksModal() { closeModal('friendLinksModal'); }
+
+        // ===== Click overlay to close =====
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // ===== ESC to close =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(el => {
+                    el.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+
+        // ===== Hamburger menu =====
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menuPanel = document.getElementById('menuPanel');
-        const menuLinks = document.querySelectorAll('.menu-link');
+
         function closeMenu() { menuPanel.classList.remove('active'); }
-        function toggleMenu(e) { e.stopPropagation(); menuPanel.classList.toggle('active'); }
-        function handleMenuClick(e) {
-            const targetId = this.getAttribute('href');
-            if (targetId && targetId !== '#') {
-                e.preventDefault();
-                const targetEl = document.querySelector(targetId);
-                if (targetEl) { targetEl.scrollIntoView({ behavior: 'smooth' }); closeMenu(); }
-            }
+        function toggleMenu(e) {
+            e.stopPropagation();
+            menuPanel.classList.toggle('active');
         }
+
         if (hamburgerBtn && menuPanel) {
             hamburgerBtn.addEventListener('click', toggleMenu);
-            document.addEventListener('click', function(event) {
-                if (!menuPanel.contains(event.target) && !hamburgerBtn.contains(event.target)) closeMenu();
+            document.addEventListener('click', (e) => {
+                if (!menuPanel.contains(e.target) && !hamburgerBtn.contains(e.target)) closeMenu();
             });
             window.addEventListener('scroll', () => { if (menuPanel.classList.contains('active')) closeMenu(); });
-            menuLinks.forEach(link => link.addEventListener('click', handleMenuClick));
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId !== '#') {
+                        e.preventDefault();
+                        const target = document.querySelector(targetId);
+                        if (target) { target.scrollIntoView({ behavior: 'smooth' }); closeMenu(); }
+                    }
+                });
+            });
         }
     </script>
 </body>
