@@ -4,13 +4,6 @@
 >
 > 网站源码请移步：[TidalStarNan/QxwkWebs](https://github.com/TidalStarNan/QxwkWebs)
 
-## 目录结构
-
-| 目录 | 说明 |
-|------|------|
-| `mcpack-yz/` | 一中整合包下载（Minecraft 客户端） |
-| `image-logo/` | 工作室 Logo 和壁纸素材 |
-
 ## 用途
 
 本仓库通过 GitHub API 被 [QxwkWebs](https://github.com/TidalStarNan/QxwkWebs) 的下载中心页面动态调用，无需手动维护文件列表。上传文件到对应目录后，网站自动读取并展示。
@@ -23,3 +16,5 @@
 ---
 
 📧 联系邮箱：QxwkStudio@outlook.com
+
+仓库所有内容保留所有权力 2026 青翔未阔工作室
