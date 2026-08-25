@@ -2,11 +2,11 @@
 
 > 青翔未阔工作室的**文件存储仓库**，存放客户端、整合包、Logo 壁纸等可下载资源。
 >
-> 网站源码请移步：[TidalStarNan/Qxwk-Webs](https://github.com/TidalStarNan/Qxwk-Webs)
+> 网站源码请移步：[Qxwk-Studio/Qxwk-Website](https://github.com/Qxwk-Studio/Qxwk-Website)
 
 ## 用途
 
-本仓库通过 GitHub API 被 [Qxwk-Webs](https://github.com/TidalStarNan/Qxwk-Webs) 的下载中心页面动态调用，无需手动维护文件列表。上传文件到对应目录后，网站自动读取并展示。
+本仓库通过 GitHub API 被 [Qxwk-Website](https://github.com/Qxwk-Studio/Qxwk-Website) 的下载中心页面动态调用，无需手动维护文件列表。上传文件到对应目录后，网站自动读取并展示。
 
 ## 文件命名规范
 
